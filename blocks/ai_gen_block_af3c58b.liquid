@@ -1,0 +1,1116 @@
+{% doc %}
+  @prompt
+    actually i want you to make something, 
+    i also want a kind of product grid full width under the hero element, 
+    I want it to have 3 columns, 
+    1. REGULAR FIT
+    2. OVERSIZED FIT
+    3. ULTRA THICK OVERSIZED
+    
+    and then those 3 categories have like 9 products each under it in a grid. 
+    
+    and then under the 9 grid, i want a button for view all, 
+    that button should be transparent by itself, but have a small white border. , so the Regular fit, oversized fit and the ultra thick oversized, i want those as tabs, just like we have in the header. 
+    based on the tab selected, i want the collection to change under it. , okay in the individual grid element - the items of the collection,  i want quick actions to add them to cart in one click by selecting the size, 
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-grid-tabs-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-product-grid-tabs-container-{{ ai_gen_id }} {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: {{ block.settings.tab_gap }}px;
+    margin-bottom: {{ block.settings.content_spacing }}px;
+    border-bottom: {{ block.settings.tab_border_width }}px solid {{ block.settings.tab_border_color }};
+    padding-bottom: 0;
+  }
+
+  .ai-product-grid-tab-button-{{ ai_gen_id }} {
+    background: none;
+    border: none;
+    padding: {{ block.settings.tab_padding_vertical }}px {{ block.settings.tab_padding_horizontal }}px;
+    font-size: {{ block.settings.tab_font_size }}px;
+    font-weight: {{ block.settings.tab_font_weight }};
+    color: {{ block.settings.tab_text_color }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    border-bottom: {{ block.settings.tab_border_width }}px solid transparent;
+    margin-bottom: -{{ block.settings.tab_border_width }}px;
+  }
+
+  .ai-product-grid-tab-button-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.tab_hover_color }};
+  }
+
+  .ai-product-grid-tab-button-{{ ai_gen_id }}.active {
+    color: {{ block.settings.tab_active_color }};
+    border-bottom-color: {{ block.settings.tab_active_border_color }};
+  }
+
+  .ai-product-grid-tab-content-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-product-grid-tab-content-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-product-grid-products-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.products_per_row }}, 1fr);
+    gap: {{ block.settings.product_gap }}px;
+    margin-bottom: {{ block.settings.button_spacing }}px;
+  }
+
+  .ai-product-grid-product-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    display: block;
+  }
+
+  .ai-product-grid-product-link-{{ ai_gen_id }} {
+    text-decoration: none;
+    display: block;
+  }
+
+  .ai-product-grid-product-image-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: {{ block.settings.image_aspect_ratio }};
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ai-product-grid-product-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-product-grid-product-card-{{ ai_gen_id }}:hover .ai-product-grid-product-image-{{ ai_gen_id }} img {
+    transform: scale(1.05);
+  }
+
+  .ai-product-grid-product-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-product-grid-product-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: {{ block.settings.quick_add_padding }}px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 2;
+  }
+
+  .ai-product-grid-product-card-{{ ai_gen_id }}:hover .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  .ai-product-grid-quick-add-title-{{ ai_gen_id }} {
+    color: {{ block.settings.quick_add_text_color }};
+    font-size: {{ block.settings.quick_add_title_size }}px;
+    margin: 0 0 8px 0;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .ai-product-grid-size-selector-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.size_button_gap }}px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ai-product-grid-size-button-{{ ai_gen_id }} {
+    background-color: {{ block.settings.size_button_background }};
+    color: {{ block.settings.size_button_text_color }};
+    border: {{ block.settings.size_button_border_width }}px solid {{ block.settings.size_button_border_color }};
+    padding: {{ block.settings.size_button_padding }}px {{ block.settings.size_button_padding | times: 1.5 }}px;
+    font-size: {{ block.settings.size_button_font_size }}px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: {{ block.settings.size_button_border_radius }}px;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .ai-product-grid-size-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.size_button_hover_background }};
+    color: {{ block.settings.size_button_hover_text_color }};
+    border-color: {{ block.settings.size_button_hover_border_color }};
+  }
+
+  .ai-product-grid-size-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-product-grid-size-button-{{ ai_gen_id }}.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .ai-product-grid-product-info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    text-align: center;
+  }
+
+  .ai-product-grid-product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    color: {{ block.settings.product_title_color }};
+    margin: 0 0 8px 0;
+    font-weight: 500;
+  }
+
+  .ai-product-grid-product-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_price_size }}px;
+    color: {{ block.settings.product_price_color }};
+    font-weight: 600;
+  }
+
+  .ai-product-grid-view-all-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+  }
+
+  .ai-product-grid-view-all-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: transparent;
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-product-grid-view-all-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-product-grid-empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-grid-products-{{ ai_gen_id }} {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
+      gap: {{ block.settings.tab_gap | times: 0.7 }}px;
+    }
+
+    .ai-product-grid-tab-button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.tab_font_size | times: 0.9 }}px;
+      padding: {{ block.settings.tab_padding_vertical | times: 0.8 }}px {{ block.settings.tab_padding_horizontal | times: 0.8 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-grid-tabs-{{ ai_gen_id }} {
+      padding: 40px 15px;
+    }
+
+    .ai-product-grid-products-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ block.settings.product_gap | times: 0.7 }}px;
+    }
+
+    .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
+      gap: {{ block.settings.tab_gap | times: 0.5 }}px;
+      flex-wrap: wrap;
+    }
+
+    .ai-product-grid-tab-button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.tab_font_size | times: 0.8 }}px;
+      padding: {{ block.settings.tab_padding_vertical | times: 0.7 }}px {{ block.settings.tab_padding_horizontal | times: 0.7 }}px;
+    }
+
+    .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+      transform: translateY(0);
+      position: relative;
+      background: rgba(0, 0, 0, 0.9);
+    }
+  }
+{% endstyle %}
+
+<product-grid-tabs-{{ ai_gen_id }} class="ai-product-grid-tabs-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-grid-tabs-container-{{ ai_gen_id }}">
+    <div class="ai-product-grid-tabs-nav-{{ ai_gen_id }}" role="tablist">
+      {% for i in (1..3) %}
+        {% liquid
+          assign title_key = 'tab_' | append: i | append: '_title'
+          assign tab_title = block.settings[title_key]
+        %}
+        <button
+          class="ai-product-grid-tab-button-{{ ai_gen_id }} {% if i == 1 %}active{% endif %}"
+          data-tab="{{ i }}"
+          role="tab"
+          aria-selected="{% if i == 1 %}true{% else %}false{% endif %}"
+          aria-controls="ai-product-grid-tab-panel-{{ ai_gen_id }}-{{ i }}"
+        >
+          {{ tab_title }}
+        </button>
+      {% endfor %}
+    </div>
+
+    {% for i in (1..3) %}
+      {% liquid
+        assign collection_key = 'collection_' | append: i
+        assign button_text_key = 'tab_' | append: i | append: '_button_text'
+        assign button_url_key = 'tab_' | append: i | append: '_button_url'
+        assign title_key = 'tab_' | append: i | append: '_title'
+        
+        assign collection = block.settings[collection_key]
+        assign button_text = block.settings[button_text_key]
+        assign button_url = block.settings[button_url_key]
+        assign tab_title = block.settings[title_key]
+      %}
+
+      <div
+        class="ai-product-grid-tab-content-{{ ai_gen_id }} {% if i == 1 %}active{% endif %}"
+        id="ai-product-grid-tab-panel-{{ ai_gen_id }}-{{ i }}"
+        role="tabpanel"
+        aria-labelledby="tab-{{ i }}"
+      >
+        <div class="ai-product-grid-products-{{ ai_gen_id }}">
+          {% if collection != blank and collection.products.size > 0 %}
+            {% for product in collection.products limit: 9 %}
+              <div class="ai-product-grid-product-card-{{ ai_gen_id }}" data-product-id="{{ product.id }}">
+                <a href="{{ product.url }}" class="ai-product-grid-product-link-{{ ai_gen_id }}">
+                  <div class="ai-product-grid-product-image-{{ ai_gen_id }}">
+                    {% if product.featured_image %}
+                      <img
+                        src="{{ product.featured_image | image_url: width: 600 }}"
+                        alt="{{ product.featured_image.alt | escape }}"
+                        loading="lazy"
+                        width="600"
+                        height="{{ 600 | divided_by: product.featured_image.aspect_ratio | round }}"
+                      >
+                    {% else %}
+                      <div class="ai-product-grid-product-image-placeholder-{{ ai_gen_id }}">
+                        {{ 'product-1' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                    
+                    {% if product.has_only_default_variant == false %}
+                      <div class="ai-product-grid-quick-add-overlay-{{ ai_gen_id }}">
+                        <div class="ai-product-grid-quick-add-title-{{ ai_gen_id }}">{{ block.settings.quick_add_title }}</div>
+                        <div class="ai-product-grid-size-selector-{{ ai_gen_id }}">
+                          {% for variant in product.variants %}
+                            {% assign option_name = variant.option1 %}
+                            {% if variant.option2 != blank %}
+                              {% assign option_name = option_name | append: ' / ' | append: variant.option2 %}
+                            {% endif %}
+                            {% if variant.option3 != blank %}
+                              {% assign option_name = option_name | append: ' / ' | append: variant.option3 %}
+                            {% endif %}
+                            <button
+                              class="ai-product-grid-size-button-{{ ai_gen_id }}"
+                              data-variant-id="{{ variant.id }}"
+                              {% unless variant.available %}disabled{% endunless %}
+                              aria-label="Add {{ product.title }} - {{ option_name }} to cart"
+                            >
+                              {{ option_name }}
+                            </button>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </a>
+                <div class="ai-product-grid-product-info-{{ ai_gen_id }}">
+                  <h3 class="ai-product-grid-product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                  <div class="ai-product-grid-product-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="ai-product-grid-empty-state-{{ ai_gen_id }}" style="grid-column: 1 / -1;">
+              Next, select a collection for {{ tab_title }}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if collection != blank and collection.products.size > 0 %}
+          <div class="ai-product-grid-view-all-wrapper-{{ ai_gen_id }}">
+            <a href="{{ button_url | default: collection.url }}" class="ai-product-grid-view-all-{{ ai_gen_id }}">
+              {{ button_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</product-grid-tabs-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductGridTabs{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupTabs();
+        this.setupQuickAdd();
+        this.setupAccessibility();
+      }
+
+      setupTabs() {
+        const tabButtons = this.querySelectorAll('.ai-product-grid-tab-button-{{ ai_gen_id }}');
+        const tabContents = this.querySelectorAll('.ai-product-grid-tab-content-{{ ai_gen_id }}');
+
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+
+            tabButtons.forEach(btn => {
+              btn.classList.remove('active');
+              btn.setAttribute('aria-selected', 'false');
+            });
+
+            tabContents.forEach(content => {
+              content.classList.remove('active');
+            });
+
+            button.classList.add('active');
+            button.setAttribute('aria-selected', 'true');
+
+            const activeContent = this.querySelector(`#ai-product-grid-tab-panel-{{ ai_gen_id }}-${tabId}`);
+            if (activeContent) {
+              activeContent.classList.add('active');
+            }
+          });
+
+          button.addEventListener('keydown', (e) => {
+            this.handleKeyboardNavigation(e, tabButtons);
+          });
+        });
+      }
+
+      handleKeyboardNavigation(e, tabButtons) {
+        const currentIndex = Array.from(tabButtons).indexOf(e.target);
+        let newIndex;
+
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          newIndex = currentIndex + 1 >= tabButtons.length ? 0 : currentIndex + 1;
+          tabButtons[newIndex].click();
+          tabButtons[newIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          newIndex = currentIndex - 1 < 0 ? tabButtons.length - 1 : currentIndex - 1;
+          tabButtons[newIndex].click();
+          tabButtons[newIndex].focus();
+        }
+      }
+
+      setupQuickAdd() {
+        const sizeButtons = this.querySelectorAll('.ai-product-grid-size-button-{{ ai_gen_id }}');
+        
+        sizeButtons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.addToCart(button);
+          });
+        });
+      }
+
+      async addToCart(button) {
+        if (button.disabled || button.classList.contains('loading')) {
+          return;
+        }
+
+        const variantId = button.getAttribute('data-variant-id');
+        const originalText = button.textContent;
+
+        button.classList.add('loading');
+        button.textContent = '...';
+
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              items: [{
+                id: variantId,
+                quantity: 1
+              }]
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to add to cart');
+          }
+
+          button.textContent = '✓';
+          
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('loading');
+          }, 1500);
+
+          if (window.Shopify && window.Shopify.theme && window.Shopify.theme.cartUpdateCallbacks) {
+            window.Shopify.theme.cartUpdateCallbacks.forEach(callback => callback());
+          }
+
+          document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true
+          }));
+
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+          button.textContent = '✗';
+          
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('loading');
+          }, 1500);
+        }
+      }
+
+      setupAccessibility() {
+        const links = this.querySelectorAll('a.ai-product-grid-product-link-{{ ai_gen_id }}');
+        links.forEach(link => {
+          if (!link.getAttribute('aria-label')) {
+            const title = link.querySelector('.ai-product-grid-product-title-{{ ai_gen_id }}');
+            if (title) {
+              link.setAttribute('aria-label', `View ${title.textContent.trim()}`);
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define('product-grid-tabs-{{ ai_gen_id }}', ProductGridTabs{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product grid with tabs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Tab 1"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_title",
+      "label": "Title",
+      "default": "REGULAR FIT"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_button_text",
+      "label": "Button text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "tab_1_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Tab 2"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_title",
+      "label": "Title",
+      "default": "OVERSIZED FIT"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_button_text",
+      "label": "Button text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "tab_2_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Tab 3"
+    },
+    {
+      "type": "text",
+      "id": "tab_3_title",
+      "label": "Title",
+      "default": "ULTRA THICK OVERSIZED"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "tab_3_button_text",
+      "label": "Button text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "tab_3_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Quick add"
+    },
+    {
+      "type": "text",
+      "id": "quick_add_title",
+      "label": "Title",
+      "default": "Select size"
+    },
+    {
+      "type": "range",
+      "id": "quick_add_padding",
+      "label": "Padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "quick_add_title_size",
+      "label": "Title size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "quick_add_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Size buttons"
+    },
+    {
+      "type": "range",
+      "id": "size_button_gap",
+      "label": "Gap",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "size_button_padding",
+      "label": "Padding",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "size_button_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "size_button_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "size_button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "size_button_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "size_button_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "size_button_border_color",
+      "label": "Border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "size_button_hover_background",
+      "label": "Hover background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "size_button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "size_button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Products per row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "product_gap",
+      "label": "Product gap",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Content spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "label": "Button spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Tab style"
+    },
+    {
+      "type": "range",
+      "id": "tab_gap",
+      "label": "Tab gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "tab_padding_vertical",
+      "label": "Vertical padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "tab_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "tab_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "tab_font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "tab_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "tab_text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "tab_hover_color",
+      "label": "Hover color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_color",
+      "label": "Active color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "tab_border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_border_color",
+      "label": "Active border color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product title",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Product price",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Product title size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "label": "Product price size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Product cards"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "16/9",
+          "label": "Landscape (16:9)"
+        }
+      ],
+      "default": "3/4"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Vertical padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid with tabs"
+    }
+  ]
+}
+{% endschema %}
