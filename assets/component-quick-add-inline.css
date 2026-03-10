@@ -1,0 +1,112 @@
+/* ===== Gymshark-style inline quick-add overlay ===== */
+
+/*
+ * The overlay is a direct child of .card__inner (position: relative).
+ * It's OUTSIDE .card__media (which has z-index:0, trapping children),
+ * but still inside the image area.
+ * z-index: 5 ensures it's above the card link's ::after (z-index: 1).
+ */
+.card__inner > .quick-add-inline,
+.quick-add-inline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Show on card hover */
+.card:hover > .card__inner > .quick-add-inline,
+.card-wrapper:hover .quick-add-inline {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/*
+ * The card link's ::after creates a full-card clickable overlay (z-index:1).
+ * No amount of z-index on the buttons can escape .card__media's stacking context.
+ * Instead, disable pointer-events on the link overlay when card is hovered,
+ * so clicks pass through. Our JS then handles clicks on the card itself,
+ * sending you to the product page OR adding to cart (if hitting a button).
+ */
+.card-wrapper:hover .card__heading a::after {
+  pointer-events: none;
+}
+
+/* Button grid */
+.quick-add-inline__buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Square size buttons (Gymshark-style) */
+.quick-add-inline__btn {
+  background: #ffffff;
+  color: #121212;
+  border: 1px solid #e0e0e0;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+  font-weight: 500;
+  text-align: center;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.quick-add-inline__btn:hover {
+  background: #121212;
+  color: #ffffff;
+  border-color: #121212;
+}
+
+.quick-add-inline__btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.quick-add-inline__btn.adding {
+  background: #f0f0f0;
+  color: #999;
+  border-color: #e0e0e0;
+  pointer-events: none;
+}
+
+.quick-add-inline__btn.added {
+  background: #121212;
+  color: #ffffff;
+  border-color: #121212;
+  pointer-events: none;
+}
+
+.quick-add-inline__btn.error {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  pointer-events: none;
+}
+
+/* Mobile: hide overlay — users tap through to product page */
+@media screen and (max-width: 749px) {
+  .quick-add-inline {
+    display: none !important;
+  }
+}

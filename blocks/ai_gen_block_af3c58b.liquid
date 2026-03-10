@@ -17,203 +17,310 @@
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
-  .ai-product-grid-tabs-{{ ai_gen_id }} {
+  /* ===== BASE SECTION ===== */
+  .pgrid-{{ ai_gen_id }} {
     display: block;
     width: 100%;
-    padding: 60px 20px;
+    padding: 80px 0;
     background-color: {{ block.settings.background_color }};
+    overflow: hidden;
   }
 
-  .ai-product-grid-tabs-container-{{ ai_gen_id }} {
-    max-width: 100%;
+  .pgrid-inner-{{ ai_gen_id }} {
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 40px;
   }
 
-  .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
+  /* ===== TAB NAVIGATION ===== */
+  .pgrid-tabs-{{ ai_gen_id }} {
     display: flex;
     justify-content: center;
-    gap: {{ block.settings.tab_gap }}px;
-    margin-bottom: {{ block.settings.content_spacing }}px;
-    border-bottom: {{ block.settings.tab_border_width }}px solid {{ block.settings.tab_border_color }};
-    padding-bottom: 0;
+    gap: 0;
+    margin-bottom: 50px;
+    position: relative;
   }
 
-  .ai-product-grid-tab-button-{{ ai_gen_id }} {
+  .pgrid-tabs-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    max-width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, {{ block.settings.tab_border_color }}, transparent);
+  }
+
+  .pgrid-tab-{{ ai_gen_id }} {
     background: none;
     border: none;
-    padding: {{ block.settings.tab_padding_vertical }}px {{ block.settings.tab_padding_horizontal }}px;
+    padding: 16px 32px;
     font-size: {{ block.settings.tab_font_size }}px;
     font-weight: {{ block.settings.tab_font_weight }};
     color: {{ block.settings.tab_text_color }};
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2.5px;
     cursor: pointer;
     position: relative;
-    transition: all 0.3s ease;
-    border-bottom: {{ block.settings.tab_border_width }}px solid transparent;
-    margin-bottom: -{{ block.settings.tab_border_width }}px;
+    transition: color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: inherit;
   }
 
-  .ai-product-grid-tab-button-{{ ai_gen_id }}:hover {
+  .pgrid-tab-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: {{ block.settings.tab_active_color }};
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .pgrid-tab-{{ ai_gen_id }}:hover {
     color: {{ block.settings.tab_hover_color }};
   }
 
-  .ai-product-grid-tab-button-{{ ai_gen_id }}.active {
+  .pgrid-tab-{{ ai_gen_id }}.active {
     color: {{ block.settings.tab_active_color }};
-    border-bottom-color: {{ block.settings.tab_active_border_color }};
   }
 
-  .ai-product-grid-tab-content-{{ ai_gen_id }} {
+  .pgrid-tab-{{ ai_gen_id }}.active::after {
+    width: 100%;
+    left: 0;
+  }
+
+  /* ===== TAB PANELS ===== */
+  .pgrid-panel-{{ ai_gen_id }} {
     display: none;
+    animation: pgridFadeIn-{{ ai_gen_id }} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .ai-product-grid-tab-content-{{ ai_gen_id }}.active {
+  .pgrid-panel-{{ ai_gen_id }}.active {
     display: block;
   }
 
-  .ai-product-grid-products-{{ ai_gen_id }} {
+  @keyframes pgridFadeIn-{{ ai_gen_id }} {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ===== PRODUCT GRID ===== */
+  .pgrid-products-{{ ai_gen_id }} {
     display: grid;
     grid-template-columns: repeat({{ block.settings.products_per_row }}, 1fr);
     gap: {{ block.settings.product_gap }}px;
-    margin-bottom: {{ block.settings.button_spacing }}px;
   }
 
-  .ai-product-grid-product-card-{{ ai_gen_id }} {
+  /* ===== PRODUCT CARD ===== */
+  .pgrid-card-{{ ai_gen_id }} {
     position: relative;
-    overflow: hidden;
-    background-color: {{ block.settings.card_background }};
+    background: {{ block.settings.card_background }};
     border-radius: {{ block.settings.card_border_radius }}px;
-    display: block;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
   }
 
-  .ai-product-grid-product-link-{{ ai_gen_id }} {
+  .pgrid-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .pgrid-card-link-{{ ai_gen_id }} {
     text-decoration: none;
+    color: inherit;
     display: block;
   }
 
-  .ai-product-grid-product-image-{{ ai_gen_id }} {
-    width: 100%;
+  /* ===== IMAGE ===== */
+  .pgrid-img-wrap-{{ ai_gen_id }} {
+    position: relative;
     aspect-ratio: {{ block.settings.image_aspect_ratio }};
     overflow: hidden;
-    position: relative;
+    background: #f5f5f5;
   }
 
-  .ai-product-grid-product-image-{{ ai_gen_id }} img {
+  .pgrid-img-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease;
   }
 
-  .ai-product-grid-product-card-{{ ai_gen_id }}:hover .ai-product-grid-product-image-{{ ai_gen_id }} img {
-    transform: scale(1.05);
+  .pgrid-img-secondary-{{ ai_gen_id }} {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
   }
 
-  .ai-product-grid-product-image-placeholder-{{ ai_gen_id }} {
-    width: 100%;
-    height: 100%;
-    background-color: #f4f4f4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .pgrid-card-{{ ai_gen_id }}:hover .pgrid-img-{{ ai_gen_id }}:first-child {
+    transform: scale(1.06);
   }
 
-  .ai-product-grid-product-image-placeholder-{{ ai_gen_id }} svg {
-    width: 60%;
-    height: 60%;
-    opacity: 0.3;
+  .pgrid-card-{{ ai_gen_id }}:hover .pgrid-img-secondary-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: scale(1.06);
   }
 
-  .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+  /* ===== QUICK ADD OVERLAY (Gymshark-style white) ===== */
+  .pgrid-quickadd-{{ ai_gen_id }} {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    padding: {{ block.settings.quick_add_padding }}px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 14px 12px;
     transform: translateY(100%);
-    transition: transform 0.3s ease;
-    z-index: 2;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 3;
   }
 
-  .ai-product-grid-product-card-{{ ai_gen_id }}:hover .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+  .pgrid-card-{{ ai_gen_id }}:hover .pgrid-quickadd-{{ ai_gen_id }} {
     transform: translateY(0);
   }
 
-  .ai-product-grid-quick-add-title-{{ ai_gen_id }} {
-    color: {{ block.settings.quick_add_text_color }};
-    font-size: {{ block.settings.quick_add_title_size }}px;
-    margin: 0 0 8px 0;
-    text-align: center;
-    font-weight: 600;
+  .pgrid-quickadd-label-{{ ai_gen_id }} {
+    display: none;
   }
 
-  .ai-product-grid-size-selector-{{ ai_gen_id }} {
+  .pgrid-sizes-{{ ai_gen_id }} {
     display: flex;
-    gap: {{ block.settings.size_button_gap }}px;
+    gap: 6px;
     justify-content: center;
     flex-wrap: wrap;
   }
 
-  .ai-product-grid-size-button-{{ ai_gen_id }} {
-    background-color: {{ block.settings.size_button_background }};
-    color: {{ block.settings.size_button_text_color }};
-    border: {{ block.settings.size_button_border_width }}px solid {{ block.settings.size_button_border_color }};
-    padding: {{ block.settings.size_button_padding }}px {{ block.settings.size_button_padding | times: 1.5 }}px;
-    font-size: {{ block.settings.size_button_font_size }}px;
+  .pgrid-size-btn-{{ ai_gen_id }} {
+    background: #ffffff;
+    color: #121212;
+    border: 1px solid #e0e0e0;
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    font-size: 13px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: {{ block.settings.size_button_border_radius }}px;
-    font-weight: 600;
-    min-width: 40px;
+    border-radius: 0;
+    font-weight: 500;
     text-align: center;
+    letter-spacing: 0;
+    font-family: inherit;
+    line-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .ai-product-grid-size-button-{{ ai_gen_id }}:hover {
-    background-color: {{ block.settings.size_button_hover_background }};
-    color: {{ block.settings.size_button_hover_text_color }};
-    border-color: {{ block.settings.size_button_hover_border_color }};
+  .pgrid-size-btn-{{ ai_gen_id }}:hover {
+    background: #121212;
+    color: #ffffff;
+    border-color: #121212;
   }
 
-  .ai-product-grid-size-button-{{ ai_gen_id }}:disabled {
+  .pgrid-size-btn-{{ ai_gen_id }}:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+    text-decoration: line-through;
   }
 
-  .ai-product-grid-size-button-{{ ai_gen_id }}.loading {
-    opacity: 0.6;
+  .pgrid-size-btn-{{ ai_gen_id }}.adding {
+    background: #f0f0f0;
+    color: #999;
+    border-color: #e0e0e0;
     pointer-events: none;
   }
 
-  .ai-product-grid-product-info-{{ ai_gen_id }} {
-    padding: {{ block.settings.card_padding }}px;
-    text-align: center;
+  .pgrid-size-btn-{{ ai_gen_id }}.added {
+    background: #121212;
+    color: #ffffff;
+    border-color: #121212;
+    pointer-events: none;
   }
 
-  .ai-product-grid-product-title-{{ ai_gen_id }} {
+  .pgrid-size-btn-{{ ai_gen_id }}.error {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    pointer-events: none;
+  }
+
+  /* ===== PRODUCT INFO ===== */
+  .pgrid-info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    text-align: left;
+  }
+
+  .pgrid-title-{{ ai_gen_id }} {
     font-size: {{ block.settings.product_title_size }}px;
     color: {{ block.settings.product_title_color }};
-    margin: 0 0 8px 0;
+    margin: 0 0 6px;
     font-weight: 500;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .ai-product-grid-product-price-{{ ai_gen_id }} {
+  .pgrid-price-{{ ai_gen_id }} {
     font-size: {{ block.settings.product_price_size }}px;
     color: {{ block.settings.product_price_color }};
     font-weight: 600;
+    letter-spacing: 0.5px;
   }
 
-  .ai-product-grid-view-all-wrapper-{{ ai_gen_id }} {
+  .pgrid-price-compare-{{ ai_gen_id }} {
+    text-decoration: line-through;
+    opacity: 0.5;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+
+  /* ===== SOLD OUT BADGE ===== */
+  .pgrid-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 2px;
+    line-height: 1;
+  }
+
+  .pgrid-badge-sold-{{ ai_gen_id }} {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .pgrid-badge-sale-{{ ai_gen_id }} {
+    background: #ef4444;
+    color: #ffffff;
+  }
+
+  /* ===== VIEW ALL BUTTON ===== */
+  .pgrid-viewall-wrap-{{ ai_gen_id }} {
     display: flex;
     justify-content: center;
+    margin-top: {{ block.settings.button_spacing }}px;
   }
 
-  .ai-product-grid-view-all-{{ ai_gen_id }} {
+  .pgrid-viewall-{{ ai_gen_id }} {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
     padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
-    background-color: transparent;
+    background: transparent;
     color: {{ block.settings.button_text_color }};
     border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
     border-radius: {{ block.settings.button_border_radius }}px;
@@ -221,87 +328,170 @@
     font-weight: {{ block.settings.button_font_weight }};
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: inherit;
   }
 
-  .ai-product-grid-view-all-{{ ai_gen_id }}:hover {
-    background-color: {{ block.settings.button_hover_background }};
+  .pgrid-viewall-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.35s ease;
+  }
+
+  .pgrid-viewall-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_hover_background }};
     color: {{ block.settings.button_hover_text_color }};
     border-color: {{ block.settings.button_hover_border_color }};
   }
 
-  .ai-product-grid-empty-state-{{ ai_gen_id }} {
-    text-align: center;
-    padding: 40px 20px;
-    color: #666;
-    font-size: 14px;
+  .pgrid-viewall-{{ ai_gen_id }}:hover svg {
+    transform: translateX(4px);
   }
 
+  /* ===== EMPTY STATE ===== */
+  .pgrid-empty-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.tab_text_color }};
+    font-size: 14px;
+    letter-spacing: 1px;
+    border: 1px dashed {{ block.settings.tab_border_color }};
+    border-radius: 8px;
+  }
+
+  .pgrid-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+  }
+
+  .pgrid-placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.2;
+  }
+
+  /* ===== RESPONSIVE ===== */
   @media screen and (max-width: 989px) {
-    .ai-product-grid-products-{{ ai_gen_id }} {
+    .pgrid-{{ ai_gen_id }} {
+      padding: 60px 0;
+    }
+
+    .pgrid-inner-{{ ai_gen_id }} {
+      padding: 0 24px;
+    }
+
+    .pgrid-products-{{ ai_gen_id }} {
       grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
-    .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
-      gap: {{ block.settings.tab_gap | times: 0.7 }}px;
-    }
-
-    .ai-product-grid-tab-button-{{ ai_gen_id }} {
-      font-size: {{ block.settings.tab_font_size | times: 0.9 }}px;
-      padding: {{ block.settings.tab_padding_vertical | times: 0.8 }}px {{ block.settings.tab_padding_horizontal | times: 0.8 }}px;
+    .pgrid-tab-{{ ai_gen_id }} {
+      padding: 12px 20px;
+      font-size: {{ block.settings.tab_font_size | minus: 2 }}px;
+      letter-spacing: 1.5px;
     }
   }
 
   @media screen and (max-width: 749px) {
-    .ai-product-grid-tabs-{{ ai_gen_id }} {
-      padding: 40px 15px;
+    .pgrid-{{ ai_gen_id }} {
+      padding: 40px 0;
     }
 
-    .ai-product-grid-products-{{ ai_gen_id }} {
+    .pgrid-inner-{{ ai_gen_id }} {
+      padding: 0 16px;
+    }
+
+    .pgrid-products-{{ ai_gen_id }} {
       grid-template-columns: repeat(2, 1fr);
-      gap: {{ block.settings.product_gap | times: 0.7 }}px;
+      gap: 10px;
     }
 
-    .ai-product-grid-tabs-nav-{{ ai_gen_id }} {
-      gap: {{ block.settings.tab_gap | times: 0.5 }}px;
-      flex-wrap: wrap;
+    .pgrid-tabs-{{ ai_gen_id }} {
+      gap: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      justify-content: flex-start;
+      padding: 0 16px;
+      margin-bottom: 30px;
     }
 
-    .ai-product-grid-tab-button-{{ ai_gen_id }} {
-      font-size: {{ block.settings.tab_font_size | times: 0.8 }}px;
-      padding: {{ block.settings.tab_padding_vertical | times: 0.7 }}px {{ block.settings.tab_padding_horizontal | times: 0.7 }}px;
+    .pgrid-tabs-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
     }
 
-    .ai-product-grid-quick-add-overlay-{{ ai_gen_id }} {
+    .pgrid-tab-{{ ai_gen_id }} {
+      padding: 10px 16px;
+      font-size: {{ block.settings.tab_font_size | minus: 3 }}px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pgrid-quickadd-{{ ai_gen_id }} {
       transform: translateY(0);
       position: relative;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px;
+    }
+
+    .pgrid-size-btn-{{ ai_gen_id }} {
+      width: 38px;
+      height: 38px;
+      font-size: 11px;
+      line-height: 38px;
+    }
+
+    .pgrid-info-{{ ai_gen_id }} {
+      padding: 10px;
+    }
+
+    .pgrid-title-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+
+    .pgrid-price-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+
+
+
+    .pgrid-viewall-{{ ai_gen_id }} {
+      font-size: 12px;
+      padding: 12px 28px;
     }
   }
 {% endstyle %}
 
-<product-grid-tabs-{{ ai_gen_id }} class="ai-product-grid-tabs-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
-  <div class="ai-product-grid-tabs-container-{{ ai_gen_id }}">
-    <div class="ai-product-grid-tabs-nav-{{ ai_gen_id }}" role="tablist">
+<product-grid-tabs-{{ ai_gen_id }} class="pgrid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="pgrid-inner-{{ ai_gen_id }}">
+
+    <!-- Tab Navigation -->
+    <div class="pgrid-tabs-{{ ai_gen_id }}" role="tablist">
       {% for i in (1..3) %}
         {% liquid
           assign title_key = 'tab_' | append: i | append: '_title'
           assign tab_title = block.settings[title_key]
         %}
         <button
-          class="ai-product-grid-tab-button-{{ ai_gen_id }} {% if i == 1 %}active{% endif %}"
+          class="pgrid-tab-{{ ai_gen_id }}{% if i == 1 %} active{% endif %}"
           data-tab="{{ i }}"
           role="tab"
           aria-selected="{% if i == 1 %}true{% else %}false{% endif %}"
-          aria-controls="ai-product-grid-tab-panel-{{ ai_gen_id }}-{{ i }}"
+          aria-controls="pgrid-panel-{{ ai_gen_id }}-{{ i }}"
         >
           {{ tab_title }}
         </button>
       {% endfor %}
     </div>
 
+    <!-- Tab Panels -->
     {% for i in (1..3) %}
       {% liquid
         assign collection_key = 'collection_' | append: i
@@ -316,50 +506,63 @@
       %}
 
       <div
-        class="ai-product-grid-tab-content-{{ ai_gen_id }} {% if i == 1 %}active{% endif %}"
-        id="ai-product-grid-tab-panel-{{ ai_gen_id }}-{{ i }}"
+        class="pgrid-panel-{{ ai_gen_id }}{% if i == 1 %} active{% endif %}"
+        id="pgrid-panel-{{ ai_gen_id }}-{{ i }}"
         role="tabpanel"
-        aria-labelledby="tab-{{ i }}"
       >
-        <div class="ai-product-grid-products-{{ ai_gen_id }}">
+        <div class="pgrid-products-{{ ai_gen_id }}">
           {% if collection != blank and collection.products.size > 0 %}
-            {% for product in collection.products limit: 9 %}
-              <div class="ai-product-grid-product-card-{{ ai_gen_id }}" data-product-id="{{ product.id }}">
-                <a href="{{ product.url }}" class="ai-product-grid-product-link-{{ ai_gen_id }}">
-                  <div class="ai-product-grid-product-image-{{ ai_gen_id }}">
+            {% for product in collection.products limit: block.settings.products_to_show %}
+              <div class="pgrid-card-{{ ai_gen_id }}" data-product-id="{{ product.id }}">
+
+                {%- comment -%} Badges {%- endcomment -%}
+                {% if product.available == false %}
+                  <span class="pgrid-badge-{{ ai_gen_id }} pgrid-badge-sold-{{ ai_gen_id }}">Sold out</span>
+                {% elsif product.compare_at_price > product.price %}
+                  {% assign savings = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+                  <span class="pgrid-badge-{{ ai_gen_id }} pgrid-badge-sale-{{ ai_gen_id }}">-{{ savings }}%</span>
+                {% endif %}
+
+                <a href="{{ product.url }}" class="pgrid-card-link-{{ ai_gen_id }}">
+                  <div class="pgrid-img-wrap-{{ ai_gen_id }}">
                     {% if product.featured_image %}
                       <img
+                        class="pgrid-img-{{ ai_gen_id }}"
                         src="{{ product.featured_image | image_url: width: 600 }}"
                         alt="{{ product.featured_image.alt | escape }}"
                         loading="lazy"
                         width="600"
                         height="{{ 600 | divided_by: product.featured_image.aspect_ratio | round }}"
                       >
+                      {% if product.images[1] %}
+                        <img
+                          class="pgrid-img-{{ ai_gen_id }} pgrid-img-secondary-{{ ai_gen_id }}"
+                          src="{{ product.images[1] | image_url: width: 600 }}"
+                          alt="{{ product.images[1].alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="{{ 600 | divided_by: product.images[1].aspect_ratio | round }}"
+                        >
+                      {% endif %}
                     {% else %}
-                      <div class="ai-product-grid-product-image-placeholder-{{ ai_gen_id }}">
+                      <div class="pgrid-placeholder-{{ ai_gen_id }}">
                         {{ 'product-1' | placeholder_svg_tag }}
                       </div>
                     {% endif %}
-                    
-                    {% if product.has_only_default_variant == false %}
-                      <div class="ai-product-grid-quick-add-overlay-{{ ai_gen_id }}">
-                        <div class="ai-product-grid-quick-add-title-{{ ai_gen_id }}">{{ block.settings.quick_add_title }}</div>
-                        <div class="ai-product-grid-size-selector-{{ ai_gen_id }}">
+
+                    {%- comment -%} Quick-add overlay — only for products with variants {%- endcomment -%}
+                    {% if product.has_only_default_variant == false and product.available %}
+                      <div class="pgrid-quickadd-{{ ai_gen_id }}">
+                        <p class="pgrid-quickadd-label-{{ ai_gen_id }}">{{ block.settings.quick_add_title }}</p>
+                        <div class="pgrid-sizes-{{ ai_gen_id }}">
                           {% for variant in product.variants %}
-                            {% assign option_name = variant.option1 %}
-                            {% if variant.option2 != blank %}
-                              {% assign option_name = option_name | append: ' / ' | append: variant.option2 %}
-                            {% endif %}
-                            {% if variant.option3 != blank %}
-                              {% assign option_name = option_name | append: ' / ' | append: variant.option3 %}
-                            {% endif %}
                             <button
-                              class="ai-product-grid-size-button-{{ ai_gen_id }}"
+                              class="pgrid-size-btn-{{ ai_gen_id }}"
                               data-variant-id="{{ variant.id }}"
                               {% unless variant.available %}disabled{% endunless %}
-                              aria-label="Add {{ product.title }} - {{ option_name }} to cart"
+                              aria-label="Add {{ product.title }} — {{ variant.title }} to cart"
                             >
-                              {{ option_name }}
+                              {{ variant.option1 }}
                             </button>
                           {% endfor %}
                         </div>
@@ -367,28 +570,38 @@
                     {% endif %}
                   </div>
                 </a>
-                <div class="ai-product-grid-product-info-{{ ai_gen_id }}">
-                  <h3 class="ai-product-grid-product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
-                  <div class="ai-product-grid-product-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+
+                <div class="pgrid-info-{{ ai_gen_id }}">
+                  <h3 class="pgrid-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                  <div class="pgrid-price-{{ ai_gen_id }}">
+                    {{ product.price | money }}
+                    {% if product.compare_at_price > product.price %}
+                      <span class="pgrid-price-compare-{{ ai_gen_id }}">{{ product.compare_at_price | money }}</span>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             {% endfor %}
           {% else %}
-            <div class="ai-product-grid-empty-state-{{ ai_gen_id }}" style="grid-column: 1 / -1;">
-              Next, select a collection for {{ tab_title }}
+            <div class="pgrid-empty-{{ ai_gen_id }}">
+              Select a collection for "{{ tab_title }}" in the theme editor
             </div>
           {% endif %}
         </div>
 
         {% if collection != blank and collection.products.size > 0 %}
-          <div class="ai-product-grid-view-all-wrapper-{{ ai_gen_id }}">
-            <a href="{{ button_url | default: collection.url }}" class="ai-product-grid-view-all-{{ ai_gen_id }}">
+          <div class="pgrid-viewall-wrap-{{ ai_gen_id }}">
+            <a href="{{ button_url | default: collection.url }}" class="pgrid-viewall-{{ ai_gen_id }}">
               {{ button_text }}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </a>
           </div>
         {% endif %}
       </div>
     {% endfor %}
+
   </div>
 </product-grid-tabs-{{ ai_gen_id }}>
 
@@ -397,140 +610,137 @@
     class ProductGridTabs{{ ai_gen_id }} extends HTMLElement {
       constructor() {
         super();
+        /* Grab the cart notification or cart drawer — whichever Dawn has active */
+        this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
       }
 
       connectedCallback() {
-        this.setupTabs();
-        this.setupQuickAdd();
-        this.setupAccessibility();
+        this.initTabs();
+        this.initQuickAdd();
       }
 
-      setupTabs() {
-        const tabButtons = this.querySelectorAll('.ai-product-grid-tab-button-{{ ai_gen_id }}');
-        const tabContents = this.querySelectorAll('.ai-product-grid-tab-content-{{ ai_gen_id }}');
+      /* ---------- TABS ---------- */
+      initTabs() {
+        const buttons = this.querySelectorAll('.pgrid-tab-{{ ai_gen_id }}');
+        const panels  = this.querySelectorAll('.pgrid-panel-{{ ai_gen_id }}');
 
-        tabButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            const tabId = button.getAttribute('data-tab');
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.tab;
 
-            tabButtons.forEach(btn => {
-              btn.classList.remove('active');
-              btn.setAttribute('aria-selected', 'false');
-            });
+            buttons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+            panels.forEach(p => p.classList.remove('active'));
 
-            tabContents.forEach(content => {
-              content.classList.remove('active');
-            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
 
-            button.classList.add('active');
-            button.setAttribute('aria-selected', 'true');
-
-            const activeContent = this.querySelector(`#ai-product-grid-tab-panel-{{ ai_gen_id }}-${tabId}`);
-            if (activeContent) {
-              activeContent.classList.add('active');
-            }
+            const panel = this.querySelector(`#pgrid-panel-{{ ai_gen_id }}-${id}`);
+            if (panel) panel.classList.add('active');
           });
 
-          button.addEventListener('keydown', (e) => {
-            this.handleKeyboardNavigation(e, tabButtons);
+          /* Keyboard: Arrow keys move between tabs */
+          btn.addEventListener('keydown', (e) => {
+            const btns = Array.from(buttons);
+            const idx = btns.indexOf(e.target);
+            let next;
+            if (e.key === 'ArrowRight') { e.preventDefault(); next = btns[(idx + 1) % btns.length]; }
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); next = btns[(idx - 1 + btns.length) % btns.length]; }
+            if (next) { next.click(); next.focus(); }
           });
         });
       }
 
-      handleKeyboardNavigation(e, tabButtons) {
-        const currentIndex = Array.from(tabButtons).indexOf(e.target);
-        let newIndex;
-
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          newIndex = currentIndex + 1 >= tabButtons.length ? 0 : currentIndex + 1;
-          tabButtons[newIndex].click();
-          tabButtons[newIndex].focus();
-        } else if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          newIndex = currentIndex - 1 < 0 ? tabButtons.length - 1 : currentIndex - 1;
-          tabButtons[newIndex].click();
-          tabButtons[newIndex].focus();
-        }
-      }
-
-      setupQuickAdd() {
-        const sizeButtons = this.querySelectorAll('.ai-product-grid-size-button-{{ ai_gen_id }}');
-        
-        sizeButtons.forEach(button => {
-          button.addEventListener('click', (e) => {
+      /* ---------- QUICK ADD TO CART ---------- */
+      initQuickAdd() {
+        this.querySelectorAll('.pgrid-size-btn-{{ ai_gen_id }}').forEach(btn => {
+          btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.addToCart(button);
+            this.addToCart(btn);
           });
         });
       }
 
       async addToCart(button) {
-        if (button.disabled || button.classList.contains('loading')) {
-          return;
-        }
+        if (button.disabled || button.classList.contains('adding')) return;
 
         const variantId = button.getAttribute('data-variant-id');
         const originalText = button.textContent;
 
-        button.classList.add('loading');
-        button.textContent = '...';
+        button.classList.add('adding');
+        button.textContent = '•••';
 
         try {
-          const response = await fetch('/cart/add.js', {
+          /* Use FormData just like product-form.js does */
+          const formData = new FormData();
+          formData.append('id', variantId);
+          formData.append('quantity', '1');
+
+          if (this.cart) {
+            formData.append(
+              'sections',
+              this.cart.getSectionsToRender().map((section) => section.id)
+            );
+            formData.append('sections_url', window.location.pathname);
+            this.cart.setActiveElement(document.activeElement);
+          }
+
+          const config = typeof fetchConfig === 'function' ? fetchConfig('javascript') : {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              items: [{
-                id: variantId,
-                quantity: 1
-              }]
-            })
-          });
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          };
+          config.headers['X-Requested-With'] = 'XMLHttpRequest';
+          delete config.headers['Content-Type'];
+          config.body = formData;
 
-          if (!response.ok) {
-            throw new Error('Failed to add to cart');
+          const res = await fetch(window.routes?.cart_add_url || '/cart/add.js', config);
+          const response = await res.json();
+
+          /* Check for error — Dawn returns { status: 422, ... } on failure */
+          if (response.status) {
+            throw new Error(response.description || 'Could not add to cart');
           }
 
+          /* Success feedback on button */
+          button.classList.remove('adding');
+          button.classList.add('added');
           button.textContent = '✓';
-          
-          setTimeout(() => {
-            button.textContent = originalText;
-            button.classList.remove('loading');
-          }, 1500);
 
-          if (window.Shopify && window.Shopify.theme && window.Shopify.theme.cartUpdateCallbacks) {
-            window.Shopify.theme.cartUpdateCallbacks.forEach(callback => callback());
+          /* Publish cartUpdate FIRST (same order as product-form.js) */
+          if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined') {
+            publish(PUB_SUB_EVENTS.cartUpdate, {
+              source: 'product-grid-tabs',
+              productVariantId: variantId,
+              cartData: response
+            });
           }
 
-          document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
-            bubbles: true
-          }));
+          /* Then tell Dawn to update the cart icon count + open the notification / drawer */
+          if (this.cart) {
+            this.cart.renderContents(response);
+          }
 
-        } catch (error) {
-          console.error('Error adding to cart:', error);
+          /* Remove is-empty class if the cart was empty */
+          if (this.cart && this.cart.classList.contains('is-empty')) {
+            this.cart.classList.remove('is-empty');
+          }
+
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('added');
+          }, 1800);
+
+        } catch (err) {
+          console.error('Quick add error:', err);
+          button.classList.remove('adding');
+          button.classList.add('error');
           button.textContent = '✗';
-          
+
           setTimeout(() => {
             button.textContent = originalText;
-            button.classList.remove('loading');
-          }, 1500);
+            button.classList.remove('error');
+          }, 1800);
         }
-      }
-
-      setupAccessibility() {
-        const links = this.querySelectorAll('a.ai-product-grid-product-link-{{ ai_gen_id }}');
-        links.forEach(link => {
-          if (!link.getAttribute('aria-label')) {
-            const title = link.querySelector('.ai-product-grid-product-title-{{ ai_gen_id }}');
-            if (title) {
-              link.setAttribute('aria-label', `View ${title.textContent.trim()}`);
-            }
-          }
-        });
       }
     }
 
@@ -623,133 +833,16 @@
     },
     {
       "type": "header",
-      "content": "Quick add"
-    },
-    {
-      "type": "text",
-      "id": "quick_add_title",
-      "label": "Title",
-      "default": "Select size"
+      "content": "Products"
     },
     {
       "type": "range",
-      "id": "quick_add_padding",
-      "label": "Padding",
-      "min": 5,
-      "max": 30,
-      "step": 5,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "quick_add_title_size",
-      "label": "Title size",
-      "min": 10,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "color",
-      "id": "quick_add_text_color",
-      "label": "Text color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "header",
-      "content": "Size buttons"
-    },
-    {
-      "type": "range",
-      "id": "size_button_gap",
-      "label": "Gap",
-      "min": 4,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 8
-    },
-    {
-      "type": "range",
-      "id": "size_button_padding",
-      "label": "Padding",
-      "min": 4,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 8
-    },
-    {
-      "type": "range",
-      "id": "size_button_font_size",
-      "label": "Font size",
-      "min": 10,
-      "max": 18,
-      "step": 1,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "size_button_border_width",
-      "label": "Border width",
-      "min": 1,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "size_button_border_radius",
-      "label": "Border radius",
-      "min": 0,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 4
-    },
-    {
-      "type": "color",
-      "id": "size_button_background",
-      "label": "Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "size_button_text_color",
-      "label": "Text color",
-      "default": "#121212"
-    },
-    {
-      "type": "color",
-      "id": "size_button_border_color",
-      "label": "Border color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "size_button_hover_background",
-      "label": "Hover background",
-      "default": "#121212"
-    },
-    {
-      "type": "color",
-      "id": "size_button_hover_text_color",
-      "label": "Hover text color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "size_button_hover_border_color",
-      "label": "Hover border color",
-      "default": "#121212"
-    },
-    {
-      "type": "header",
-      "content": "Layout"
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 9
     },
     {
       "type": "range",
@@ -771,58 +864,18 @@
       "default": 15
     },
     {
-      "type": "range",
-      "id": "content_spacing",
-      "label": "Content spacing",
-      "min": 20,
-      "max": 80,
-      "step": 5,
-      "unit": "px",
-      "default": 40
+      "type": "header",
+      "content": "Quick add"
     },
     {
-      "type": "range",
-      "id": "button_spacing",
-      "label": "Button spacing",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 30
+      "type": "text",
+      "id": "quick_add_title",
+      "label": "Label text",
+      "default": "Quick add"
     },
     {
       "type": "header",
       "content": "Tab style"
-    },
-    {
-      "type": "range",
-      "id": "tab_gap",
-      "label": "Tab gap",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 30
-    },
-    {
-      "type": "range",
-      "id": "tab_padding_vertical",
-      "label": "Vertical padding",
-      "min": 5,
-      "max": 30,
-      "step": 5,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "tab_padding_horizontal",
-      "label": "Horizontal padding",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 20
     },
     {
       "type": "range",
@@ -832,47 +885,25 @@
       "max": 24,
       "step": 1,
       "unit": "px",
-      "default": 16
+      "default": 14
     },
     {
       "type": "select",
       "id": "tab_font_weight",
       "label": "Font weight",
       "options": [
-        {
-          "value": "400",
-          "label": "Normal"
-        },
-        {
-          "value": "500",
-          "label": "Medium"
-        },
-        {
-          "value": "600",
-          "label": "Semi-bold"
-        },
-        {
-          "value": "700",
-          "label": "Bold"
-        }
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
       ],
       "default": "600"
-    },
-    {
-      "type": "range",
-      "id": "tab_border_width",
-      "label": "Border width",
-      "min": 1,
-      "max": 5,
-      "step": 1,
-      "unit": "px",
-      "default": 2
     },
     {
       "type": "color",
       "id": "tab_text_color",
       "label": "Text color",
-      "default": "#666666"
+      "default": "#888888"
     },
     {
       "type": "color",
@@ -889,14 +920,8 @@
     {
       "type": "color",
       "id": "tab_border_color",
-      "label": "Border color",
+      "label": "Divider color",
       "default": "#e0e0e0"
-    },
-    {
-      "type": "color",
-      "id": "tab_active_border_color",
-      "label": "Active border color",
-      "default": "#121212"
     },
     {
       "type": "header",
@@ -959,22 +984,10 @@
       "id": "image_aspect_ratio",
       "label": "Image aspect ratio",
       "options": [
-        {
-          "value": "1/1",
-          "label": "Square (1:1)"
-        },
-        {
-          "value": "3/4",
-          "label": "Portrait (3:4)"
-        },
-        {
-          "value": "4/5",
-          "label": "Portrait (4:5)"
-        },
-        {
-          "value": "16/9",
-          "label": "Landscape (16:9)"
-        }
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "2/3", "label": "Tall (2:3)" }
       ],
       "default": "3/4"
     },
@@ -991,7 +1004,7 @@
     {
       "type": "range",
       "id": "card_padding",
-      "label": "Card padding",
+      "label": "Info padding",
       "min": 5,
       "max": 30,
       "step": 5,
@@ -1000,47 +1013,57 @@
     },
     {
       "type": "header",
-      "content": "Button style"
+      "content": "View all button"
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "label": "Top spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
     },
     {
       "type": "color",
       "id": "button_text_color",
       "label": "Text color",
-      "default": "#ffffff"
+      "default": "#121212"
     },
     {
       "type": "color",
       "id": "button_border_color",
       "label": "Border color",
-      "default": "#ffffff"
+      "default": "#121212"
     },
     {
       "type": "color",
       "id": "button_hover_background",
       "label": "Hover background",
-      "default": "#ffffff"
+      "default": "#121212"
     },
     {
       "type": "color",
       "id": "button_hover_text_color",
       "label": "Hover text color",
-      "default": "#121212"
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "button_hover_border_color",
       "label": "Hover border color",
-      "default": "#ffffff"
+      "default": "#121212"
     },
     {
       "type": "range",
       "id": "button_border_width",
       "label": "Border width",
       "min": 1,
-      "max": 5,
+      "max": 4,
       "step": 1,
       "unit": "px",
-      "default": 2
+      "default": 1
     },
     {
       "type": "range",
@@ -1080,29 +1103,17 @@
       "max": 24,
       "step": 1,
       "unit": "px",
-      "default": 14
+      "default": 13
     },
     {
       "type": "select",
       "id": "button_font_weight",
       "label": "Font weight",
       "options": [
-        {
-          "value": "400",
-          "label": "Normal"
-        },
-        {
-          "value": "500",
-          "label": "Medium"
-        },
-        {
-          "value": "600",
-          "label": "Semi-bold"
-        },
-        {
-          "value": "700",
-          "label": "Bold"
-        }
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
       ],
       "default": "600"
     }

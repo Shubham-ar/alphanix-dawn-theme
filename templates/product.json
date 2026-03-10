@@ -27,7 +27,7 @@
           "type": "price",
           "settings": {}
         },
-        "variant_picker": {
+        "variant_picker_WCTFVe": {
           "type": "variant_picker",
           "settings": {
             "picker_type": "button",
@@ -60,7 +60,7 @@
         "vendor",
         "title",
         "price",
-        "variant_picker",
+        "variant_picker_WCTFVe",
         "quantity_selector",
         "buy_buttons",
         "description",
