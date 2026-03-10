@@ -1,4 +1,4 @@
-/* ===== Gymshark-style inline quick-add overlay ===== */
+/* ===== Inline quick-add overlay ===== */
 
 /*
  * The overlay is a direct child of .card__inner (position: relative).
@@ -50,7 +50,7 @@
   flex-wrap: wrap;
 }
 
-/* Square size buttons (Gymshark-style) */
+/* Square size buttons */
 .quick-add-inline__btn {
   background: #ffffff;
   color: #121212;
