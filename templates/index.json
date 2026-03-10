@@ -75,10 +75,10 @@
             "collection_3": "",
             "tab_3_button_text": "View all",
             "tab_3_button_url": "",
-            "quick_add_title": "Quick add",
             "products_to_show": 9,
             "products_per_row": 3,
             "product_gap": 15,
+            "quick_add_title": "Quick add",
             "tab_font_size": 14,
             "tab_font_weight": "600",
             "tab_text_color": "#888888",
@@ -194,8 +194,8 @@
   },
   "order": [
     "image_banner_jdTCEx",
-    "featured_collection_dT9ELn",
     "177316448172885995",
+    "featured_collection_dT9ELn",
     "image_with_text_UfDXUn"
   ]
 }
