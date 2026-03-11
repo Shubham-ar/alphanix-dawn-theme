@@ -1,0 +1,441 @@
+{%- liquid
+  assign tab1_label  = section.settings.tab1_label  | default: 'Regular Fit'
+  assign tab1_handle = section.settings.tab1_handle | default: 'regular'
+  assign tab2_label  = section.settings.tab2_label  | default: 'Oversized'
+  assign tab2_handle = section.settings.tab2_handle | default: 'oversized'
+  assign tab3_label  = section.settings.tab3_label  | default: 'Premium'
+  assign tab3_handle = section.settings.tab3_handle | default: 'premium'
+
+  assign current_handle = collection.handle
+
+  assign all_count  = collections['all'].products_count
+  assign tab1_count = collections[tab1_handle].products_count | default: 0
+  assign tab2_count = collections[tab2_handle].products_count | default: 0
+  assign tab3_count = collections[tab3_handle].products_count | default: 0
+-%}
+
+{%- style -%}
+  /* ── Desktop styles injected from theme editor ── */
+  .section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .section-{{ section.id }} .anx-tabs__header {
+    margin-bottom: {{ section.settings.header_margin_bottom }}px;
+    {%- if section.settings.show_header == false %}display: none;{%- endif %}
+  }
+
+  .section-{{ section.id }} .anx-tabs__header svg {
+    width: {{ section.settings.pill_font_size | times: 0.083 }}rem;
+    height: {{ section.settings.pill_font_size | times: 0.083 }}rem;
+  }
+
+  .section-{{ section.id }} .anx-tabs__header-text {
+    font-size: {{ section.settings.header_font_size | times: 0.1 }}rem;
+  }
+
+  .section-{{ section.id }} .anx-tabs__pills {
+    gap: {{ section.settings.pill_gap }}px;
+    margin-bottom: {{ section.settings.pill_gap }}px;
+  }
+
+  .section-{{ section.id }} .anx-tab-pill {
+    font-size: {{ section.settings.pill_font_size | times: 0.1 }}rem;
+    padding: {{ section.settings.pill_padding_vertical }}px {{ section.settings.pill_padding_horizontal }}px;
+  }
+
+  .section-{{ section.id }} .anx-tab-count {
+    font-size: {{ section.settings.pill_font_size | times: 0.08 }}rem;
+  }
+
+  /* ── Mobile overrides ── */
+  @media screen and (max-width: 749px) {
+    .section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    .section-{{ section.id }} .anx-tabs__header {
+      margin-bottom: {{ section.settings.mobile_header_margin_bottom }}px;
+    }
+
+    .section-{{ section.id }} .anx-tabs__header-text {
+      font-size: {{ section.settings.mobile_header_font_size | times: 0.1 }}rem;
+    }
+
+    .section-{{ section.id }} .anx-tabs__pills {
+      gap: {{ section.settings.mobile_pill_gap }}px;
+    }
+
+    .section-{{ section.id }} .anx-tab-pill {
+      font-size: {{ section.settings.mobile_pill_font_size | times: 0.1 }}rem;
+      padding: {{ section.settings.mobile_pill_padding_vertical }}px {{ section.settings.mobile_pill_padding_horizontal }}px;
+    }
+
+    .section-{{ section.id }} .anx-tab-count {
+      font-size: {{ section.settings.mobile_pill_font_size | times: 0.08 }}rem;
+    }
+  }
+{%- endstyle -%}
+
+<style>
+  /* ── Static structural styles (not overridden by editor) ── */
+  .anx-tabs__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgb(var(--color-foreground));
+  }
+
+  .anx-tabs__header svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .anx-tabs__header-text {
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground));
+  }
+
+  .anx-tabs__pills {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .anx-tab-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    border-radius: 5rem;
+    border: 1px solid rgba(var(--color-foreground), 0.2);
+    background: transparent;
+    color: rgb(var(--color-foreground));
+    font-family: var(--font-body-family, inherit);
+    font-weight: 500;
+    text-decoration: none;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.12s ease;
+    white-space: nowrap;
+  }
+
+  .anx-tab-pill:hover {
+    border-color: rgba(var(--color-foreground), 0.6);
+    background: rgba(var(--color-foreground), 0.04);
+    transform: translateY(-1px);
+  }
+
+  .anx-tab-pill--active,
+  .anx-tab-pill--active:hover {
+    background: rgb(var(--color-foreground));
+    border-color: rgb(var(--color-foreground));
+    color: rgb(var(--color-background));
+  }
+
+  .anx-tab-pill--active:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .anx-tab-count {
+    font-weight: 500;
+    opacity: 0.8;
+    color: inherit;
+  }
+
+  .anx-tab-pill--active .anx-tab-count {
+    opacity: 1;
+  }
+</style>
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="section-{{ section.id }} page-width">
+
+    {%- if section.settings.show_header -%}
+      <div class="anx-tabs__header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="6" x2="20" y2="6"/>
+          <line x1="8" y1="12" x2="20" y2="12"/>
+          <line x1="12" y1="18" x2="20" y2="18"/>
+        </svg>
+        <span class="anx-tabs__header-text">{{ section.settings.header_text }}</span>
+      </div>
+    {%- endif -%}
+
+    <div class="anx-tabs__pills">
+
+      {%- assign all_active_class = '' -%}
+      {%- if current_handle == 'all' or current_handle == blank -%}
+        {%- assign all_active_class = 'anx-tab-pill--active' -%}
+      {%- endif -%}
+      <a href="{{ routes.all_products_collection_url }}" class="anx-tab-pill {{ all_active_class }}">
+        All Products <span class="anx-tab-count">({{ all_count }})</span>
+      </a>
+
+      {%- assign tab1_active_class = '' -%}
+      {%- if current_handle == tab1_handle -%}
+        {%- assign tab1_active_class = 'anx-tab-pill--active' -%}
+      {%- endif -%}
+      <a href="{{ routes.collections_url }}/{{ tab1_handle }}" class="anx-tab-pill {{ tab1_active_class }}">
+        {{ tab1_label }} <span class="anx-tab-count">({{ tab1_count }})</span>
+      </a>
+
+      {%- assign tab2_active_class = '' -%}
+      {%- if current_handle == tab2_handle -%}
+        {%- assign tab2_active_class = 'anx-tab-pill--active' -%}
+      {%- endif -%}
+      <a href="{{ routes.collections_url }}/{{ tab2_handle }}" class="anx-tab-pill {{ tab2_active_class }}">
+        {{ tab2_label }} <span class="anx-tab-count">({{ tab2_count }})</span>
+      </a>
+
+      {%- assign tab3_active_class = '' -%}
+      {%- if current_handle == tab3_handle -%}
+        {%- assign tab3_active_class = 'anx-tab-pill--active' -%}
+      {%- endif -%}
+      <a href="{{ routes.collections_url }}/{{ tab3_handle }}" class="anx-tab-pill {{ tab3_active_class }}">
+        {{ tab3_label }} <span class="anx-tab-count">({{ tab3_count }})</span>
+      </a>
+
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Category Tabs",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+    {
+      "type": "text",
+      "id": "tab1_label",
+      "label": "Tab 1 — Label",
+      "default": "Regular Fit"
+    },
+    {
+      "type": "text",
+      "id": "tab1_handle",
+      "label": "Tab 1 — Collection Handle",
+      "default": "regular",
+      "info": "The URL slug of the collection (e.g. 'regular' for /collections/regular)"
+    },
+    {
+      "type": "text",
+      "id": "tab2_label",
+      "label": "Tab 2 — Label",
+      "default": "Oversized"
+    },
+    {
+      "type": "text",
+      "id": "tab2_handle",
+      "label": "Tab 2 — Collection Handle",
+      "default": "oversized",
+      "info": "The URL slug of the collection (e.g. 'oversized' for /collections/oversized)"
+    },
+    {
+      "type": "text",
+      "id": "tab3_label",
+      "label": "Tab 3 — Label",
+      "default": "Premium"
+    },
+    {
+      "type": "text",
+      "id": "tab3_handle",
+      "label": "Tab 3 — Collection Handle",
+      "default": "premium",
+      "info": "The URL slug of the collection (e.g. 'premium' for /collections/premium)"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show 'Filter by Category' heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "header_text",
+      "label": "Heading text",
+      "default": "Filter by Category"
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Heading font size",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "default": 13,
+      "info": "Value × 0.1 = rem. Default 13 → 1.3rem"
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "label": "Space below heading (px)",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Pills — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size",
+      "label": "Pill font size",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "default": 13,
+      "info": "Value × 0.1 = rem. Default 13 → 1.3rem"
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_vertical",
+      "label": "Pill padding — top & bottom (px)",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_horizontal",
+      "label": "Pill padding — left & right (px)",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pill_gap",
+      "label": "Gap between pills (px)",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Pills — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_font_size",
+      "label": "Heading font size",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "default": 10,
+      "info": "Value × 0.1 = rem. Default 10 → 1.0rem"
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_margin_bottom",
+      "label": "Space below heading (px)",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_pill_font_size",
+      "label": "Pill font size",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "default": 10,
+      "info": "Value × 0.1 = rem. Default 10 → 1.0rem"
+    },
+    {
+      "type": "range",
+      "id": "mobile_pill_padding_vertical",
+      "label": "Pill padding — top & bottom (px)",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "mobile_pill_padding_horizontal",
+      "label": "Pill padding — left & right (px)",
+      "min": 4,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_pill_gap",
+      "label": "Gap between pills (px)",
+      "min": 2,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Tabs"
+    }
+  ]
+}
+{% endschema %}
