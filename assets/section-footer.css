@@ -18,8 +18,9 @@
 
   .footer-block.grid__item {
     padding: 0;
-    margin: 4rem 0;
+    margin: var(--mobile-block-spacing, 40px) 0;
     width: 100%;
+    text-align: left !important;
   }
 
   .footer-block.grid__item:first-child {
@@ -35,7 +36,7 @@
 
 @media screen and (min-width: 750px) {
   .footer__content-top .grid {
-    row-gap: 6rem;
+    row-gap: var(--desktop-block-spacing, 0px);
     margin-bottom: 0;
   }
 }
@@ -153,6 +154,15 @@
   margin-bottom: 2rem;
   margin-top: 0;
   font-size: calc(var(--font-heading-scale) * 1.6rem);
+  line-height: normal;
+}
+
+@media screen and (min-width: 750px) {
+  .footer-block__heading {
+    min-height: 2.5rem;
+    display: flex;
+    align-items: flex-end;
+  }
 }
 
 @media screen and (min-width: 990px) {
@@ -176,7 +186,7 @@
 }
 
 .footer-block__newsletter {
-  text-align: center;
+  text-align: left;
   flex-grow: 1;
 }
 
@@ -237,11 +247,15 @@
   .footer__follow-on-shop,
   .footer-block__newsletter {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .footer-block__newsletter {
     flex-direction: column;
+  }
+  
+  .newsletter-form {
+    align-items: flex-start;
   }
 }
 
@@ -505,4 +519,45 @@
       padding-left: 3rem;
     }
   }
+}
+
+.newsletter-form__button-stacked {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@media screen and (min-width: 750px) {
+  .footer__blocks-wrapper.grid--4-col-tablet .grid__item {
+    width: calc(25% - var(--grid-desktop-horizontal-spacing) * 3 / 4);
+    max-width: none;
+  }
+  
+  /* Give the Text & Newsletter columns more width, and the Menu links less */
+  .footer__blocks-wrapper.grid--4-col-tablet .grid__item:nth-child(1),
+  .footer__blocks-wrapper.grid--4-col-tablet .grid__item:nth-child(2) {
+    width: calc(35% - var(--grid-desktop-horizontal-spacing) * 3 / 4);
+  }
+  
+  .footer__blocks-wrapper.grid--4-col-tablet .grid__item:nth-child(3),
+  .footer__blocks-wrapper.grid--4-col-tablet .grid__item:nth-child(4) {
+    width: calc(15% - var(--grid-desktop-horizontal-spacing) * 3 / 4);
+  }
+}
+
+.footer__copyright {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 749px) {
+  .footer__copyright {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.footer__copyright .copyright__content {
+  color: rgba(var(--color-foreground), 0.75);
 }
