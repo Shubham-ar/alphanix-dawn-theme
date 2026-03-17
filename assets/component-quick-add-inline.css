@@ -9,15 +9,17 @@
 .card__inner > .quick-add-inline,
 .quick-add-inline {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
   z-index: 5;
   background: rgba(255, 255, 255, 0.95);
   padding: 12px 10px;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transform: translateY(110%);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0, 0, 0.3, 1), visibility 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +30,9 @@
 .card:hover > .card__inner > .quick-add-inline,
 .card-wrapper:hover .quick-add-inline {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  transform: translateY(0);
 }
 
 /*
