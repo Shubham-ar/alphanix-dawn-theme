@@ -20,7 +20,6 @@
             "heading_uppercase": true,
             "description": "",
             "description_style": "body",
-            "description_uppercase": false,
             "text_color": "#ffffff",
             "enable_text_shadow": true,
             "horizontal_alignment": "center",
@@ -43,7 +42,6 @@
             "heading_uppercase": true,
             "description": "",
             "description_style": "body",
-            "description_uppercase": false,
             "text_color": "#ffffff",
             "enable_text_shadow": true,
             "horizontal_alignment": "center",
@@ -72,7 +70,6 @@
         "gradient_direction": "to bottom",
         "gradient_color_1": "#000000",
         "gradient_color_2": "rgba(0,0,0,0)",
-        "step_height": 80,
         "padding_top": 0,
         "padding_bottom": 0
       }
