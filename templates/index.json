@@ -130,9 +130,9 @@
             "gradient_direction": "to bottom",
             "gradient_color_1": "#000000",
             "gradient_color_2": "rgba(0,0,0,0)",
-            "section_height": "medium",
-            "custom_height": "600px",
-            "mobile_height": 85,
+            "section_height": "custom",
+            "custom_height": "40vh",
+            "mobile_height": 100,
             "heading": "Discover our featured product",
             "description": "<p>Experience premium quality and exceptional design with our latest collection.</p>",
             "button_label": "Shop now",
@@ -196,6 +196,45 @@
         "padding_bottom": 0
       }
     },
+    "cinematic_showcase": {
+      "type": "cinematic-product-showcase",
+      "settings": {
+        "image": "shopify://shop_images/general-clothing-bold-4.jpg",
+        "video": "",
+        "enable_overlay_gradient": true,
+        "overlay_opacity": 40,
+        "gradient_direction": "to bottom",
+        "gradient_color_1": "#000000",
+        "gradient_color_2": "rgba(0,0,0,0)",
+        "heading": "Oversized Heavyweight Tee",
+        "heading_size": 48,
+        "heading_uppercase": false,
+        "description": "Built for strength. Designed for everyday performance.",
+        "description_size": 16,
+        "description_uppercase": false,
+        "text_color": "#ffffff",
+        "enable_text_shadow": true,
+        "text_shadow_horizontal": 0,
+        "text_shadow_vertical": 2,
+        "text_shadow_blur": 4,
+        "text_shadow_color": "#00000080",
+        "desktop_position": "left-center",
+        "mobile_position": "bottom-center",
+        "text_alignment": "left",
+        "content_max_width": 500,
+        "section_height": "40vh",
+        "mobile_height": 100,
+        "button_label": "Shop Now",
+        "button_link": "",
+        "button_background_color": "#ffffff",
+        "button_text_color": "#121212",
+        "button_hover_background": "#121212",
+        "button_hover_text": "#ffffff",
+        "button_font_size": 16,
+        "button_border_color": "#ffffff",
+        "button_uppercase": false
+      }
+    },
     "featured_collection_b4a8H9": {
       "type": "featured-collection",
       "name": "t:sections.featured-collection.presets.name",
@@ -221,8 +260,8 @@
         "quick_add": "standard",
         "columns_mobile": "2",
         "swipe_on_mobile": true,
-        "padding_top": 0,
-        "padding_bottom": 0
+        "padding_top": 20,
+        "padding_bottom": 20
       }
     },
     "blocks_zQw73y": {
@@ -239,9 +278,9 @@
             "gradient_direction": "to bottom",
             "gradient_color_1": "#000000",
             "gradient_color_2": "rgba(0,0,0,0)",
-            "section_height": "medium",
-            "custom_height": "600px",
-            "mobile_height": 85,
+            "section_height": "custom",
+            "custom_height": "40vh",
+            "mobile_height": 100,
             "heading": "Premium Tees Built Different",
             "description": "<p>Engineered for comfort, designed for style, experience the perfect fit</p>",
             "button_label": "Shop now",
@@ -259,7 +298,7 @@
             "text_shadow_horizontal": 0,
             "text_shadow_vertical": 2,
             "text_shadow_blur": 4,
-            "text_shadow_color": "rgba(0,0,0,0.5)",
+            "text_shadow_color": "#00000080",
             "button_background_color": "#ffffff",
             "button_text_color": "#121212",
             "button_hover_background": "#121212",
@@ -276,16 +315,6 @@
       ],
       "name": "Product showcase banner",
       "settings": {}
-    },
-    "cinematic_showcase": {
-      "type": "cinematic-product-showcase",
-      "settings": {
-        "heading": "Oversized Heavyweight Tee",
-        "description": "Built for strength. Designed for everyday performance.",
-        "button_label": "Shop Now",
-        "desktop_position": "left-center",
-        "section_height": "85vh"
-      }
     }
   },
   "order": [
