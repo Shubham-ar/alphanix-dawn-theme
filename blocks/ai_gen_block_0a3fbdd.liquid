@@ -241,14 +241,8 @@
   }
 
   .ai-product-showcase-heading-{{ ai_gen_id }} {
-    font-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
-    font-weight: {{ settings.type_header_font.weight }};
-    font-style: {{ settings.type_header_font.style }};
-    font-size: calc({{ block.settings.heading_size }}px * {{ settings.heading_scale | divided_by: 100.0 }});
     color: {{ block.settings.text_color }};
     margin: 0 0 1.6rem 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
     line-height: 1.2;
     {% if block.settings.heading_uppercase %}
       text-transform: uppercase;
@@ -258,35 +252,10 @@
     {% endif %}
   }
 
-  @media screen and (max-width: 989px) {
-    .ai-product-showcase-heading-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.heading_size | times: 0.8 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
-    }
-  }
-
-  @media screen and (max-width: 749px) {
-    .ai-product-showcase-heading-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.heading_size | times: 0.65 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
-      margin: 0 0 1.2rem 0;
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    .ai-product-showcase-heading-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.heading_size | times: 0.5 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
-    }
-  }
-
   .ai-product-showcase-description-{{ ai_gen_id }} {
-    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
-    font-weight: {{ settings.type_body_font.weight }};
-    font-style: {{ settings.type_body_font.style }};
-    font-size: calc({{ block.settings.description_size }}px * {{ settings.body_scale | divided_by: 100.0 }});
     color: {{ block.settings.text_color }};
     margin: 0 0 2.4rem 0;
     line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
     {% if block.settings.description_uppercase %}
       text-transform: uppercase;
     {% endif %}
@@ -295,65 +264,12 @@
     {% endif %}
   }
 
-  @media screen and (max-width: 989px) {
-    .ai-product-showcase-description-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.description_size | times: 0.9 }}px * {{ settings.body_scale | divided_by: 100.0 }});
-    }
-  }
-
-  @media screen and (max-width: 749px) {
-    .ai-product-showcase-description-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.description_size | times: 0.85 }}px * {{ settings.body_scale | divided_by: 100.0 }});
-      margin: 0 0 2rem 0;
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    .ai-product-showcase-description-{{ ai_gen_id }} {
-      font-size: calc({{ block.settings.description_size | times: 0.8 }}px * {{ settings.body_scale | divided_by: 100.0 }});
-      margin: 0 0 1.6rem 0;
-    }
-  }
-
   .ai-product-showcase-button-{{ ai_gen_id }} {
-    display: inline-block;
-    padding: 1.4rem 3.2rem;
-    background-color: {{ block.settings.button_background_color }};
-    color: {{ block.settings.button_text_color }};
-    text-decoration: none;
-    border-radius: {{ settings.buttons_radius }}px;
-    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
-    font-size: calc({{ block.settings.button_font_size }}px * {{ settings.body_scale | divided_by: 100.0 }});
-    font-weight: 600;
     transition: all 0.3s ease;
-    border: {{ settings.buttons_border_thickness }}px solid {{ block.settings.button_border_color }};
-    border-opacity: {{ settings.buttons_border_opacity | divided_by: 100.0 }};
-    white-space: nowrap;
-    box-shadow: {{ settings.buttons_shadow_horizontal_offset }}px {{ settings.buttons_shadow_vertical_offset }}px {{ settings.buttons_shadow_blur }}px rgba({{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity | divided_by: 100.0 }});
-    {% if block.settings.button_uppercase %}
-      text-transform: uppercase;
-    {% endif %}
   }
 
   .ai-product-showcase-button-{{ ai_gen_id }}:hover {
-    background-color: {{ block.settings.button_hover_background }};
-    color: {{ block.settings.button_hover_text }};
     transform: translateY(-2px);
-  }
-
-  @media screen and (max-width: 749px) {
-    .ai-product-showcase-button-{{ ai_gen_id }} {
-      padding: 1.2rem 2.8rem;
-      font-size: calc({{ block.settings.button_font_size | times: 0.9 }}px * {{ settings.body_scale | divided_by: 100.0 }});
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    .ai-product-showcase-button-{{ ai_gen_id }} {
-      padding: 1rem 2.4rem;
-      font-size: calc({{ block.settings.button_font_size | times: 0.85 }}px * {{ settings.body_scale | divided_by: 100.0 }});
-      white-space: normal;
-    }
   }
 
   .ai-product-showcase-empty-state-{{ ai_gen_id }} {
@@ -403,7 +319,7 @@
   <div class="ai-product-showcase-content-wrapper-{{ ai_gen_id }}">
     <div class="ai-product-showcase-content-{{ ai_gen_id }}">
       {% if block.settings.heading != blank %}
-        <h2 class="ai-product-showcase-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        <h2 class="ai-product-showcase-heading-{{ ai_gen_id }} {{ block.settings.heading_size }}">{{ block.settings.heading }}</h2>
       {% endif %}
 
       {% if block.settings.description != blank %}
@@ -415,7 +331,7 @@
       {% if block.settings.button_label != blank %}
         <a
           href="{{ block.settings.button_link }}"
-          class="ai-product-showcase-button-{{ ai_gen_id }}"
+          class="ai-product-showcase-button-{{ ai_gen_id }} button {% if block.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %}"
         >
           {{ block.settings.button_label }}
         </a>
@@ -708,14 +624,16 @@
       "content": "Typography"
     },
     {
-      "type": "range",
+      "type": "select",
       "id": "heading_size",
-      "min": 24,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Heading size",
-      "default": 48
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" },
+        { "value": "hxl", "label": "Extra Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
     },
     {
       "type": "checkbox",
@@ -724,14 +642,15 @@
       "default": false
     },
     {
-      "type": "range",
-      "id": "description_size",
-      "min": 12,
-      "max": 24,
-      "step": 2,
-      "unit": "px",
-      "label": "Description size",
-      "default": 16
+      "type": "select",
+      "id": "description_style",
+      "options": [
+        { "value": "body", "label": "Body" },
+        { "value": "subtitle", "label": "Subtitle" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "body",
+      "label": "Description style"
     },
     {
       "type": "checkbox",
@@ -792,53 +711,9 @@
       "default": "rgba(0,0,0,0.5)"
     },
     {
-      "type": "header",
-      "content": "Button style"
-    },
-    {
-      "type": "color",
-      "id": "button_background_color",
-      "label": "Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Text",
-      "default": "#121212"
-    },
-    {
-      "type": "color",
-      "id": "button_hover_background",
-      "label": "Hover background",
-      "default": "#121212"
-    },
-    {
-      "type": "color",
-      "id": "button_hover_text",
-      "label": "Hover text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "button_font_size",
-      "min": 12,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "label": "Font size",
-      "default": 16
-    },
-    {
-      "type": "color",
-      "id": "button_border_color",
-      "label": "Border color",
-      "default": "#ffffff"
-    },
-    {
       "type": "checkbox",
-      "id": "button_uppercase",
-      "label": "Button uppercase",
+      "id": "button_style_secondary",
+      "label": "Use secondary button style",
       "default": false
     }
   ],

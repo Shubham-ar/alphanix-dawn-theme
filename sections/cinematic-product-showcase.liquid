@@ -25,12 +25,12 @@
   <div class="cinematic-content {{ section.settings.desktop_position }} mobile-{{ section.settings.mobile_position }}">
     <div class="cinematic-text">
 
-      <h2 class="cinematic-heading-{{ section_id }}">{{ section.settings.heading }}</h2>
+      <h2 class="cinematic-heading-{{ section_id }} {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
 
-      <div class="cinematic-description-{{ section_id }}">{{ section.settings.description }}</div>
+      <div class="cinematic-description-{{ section_id }} {{ section.settings.description_style }}">{{ section.settings.description }}</div>
 
       {% if section.settings.button_label != blank %}
-      <a href="{{ section.settings.button_link }}" class="button cinematic-btn-{{ section_id }}">
+      <a href="{{ section.settings.button_link }}" class="button {% if section.settings.button_style_secondary %}button--secondary{% else %}button--primary{% endif %} cinematic-btn-{{ section_id }}">
         {{ section.settings.button_label }}
       </a>
       {% endif %}
@@ -101,7 +101,6 @@
 
 .cinematic-heading-{{ section_id }}{
   color: {{ section.settings.text_color }};
-  font-size: calc({{ section.settings.heading_size }}px * {{ settings.heading_scale | divided_by: 100.0 }});
   margin-bottom:16px;
   letter-spacing:-0.5px;
   line-height: 1.1;
@@ -115,8 +114,6 @@
 
 .cinematic-description-{{ section_id }}{
   color: {{ section.settings.text_color }};
-  font-size: calc({{ section.settings.description_size }}px * {{ settings.body_scale | divided_by: 100.0 }});
-  line-height:1.5;
   margin-bottom:24px;
   {% if section.settings.description_uppercase %}
     text-transform: uppercase;
@@ -127,22 +124,10 @@
 }
 
 .cinematic-btn-{{ section_id }}{
-  display: inline-block;
-  font-weight:600;
-  background-color: {{ section.settings.button_background_color }};
-  color: {{ section.settings.button_text_color }};
-  border-color: {{ section.settings.button_border_color }};
-  font-size: {{ section.settings.button_font_size }}px;
-  padding: 1.4rem 3.2rem;
   transition: all 0.3s ease;
-  {% if section.settings.button_uppercase %}
-    text-transform: uppercase;
-  {% endif %}
 }
 
 .cinematic-btn-{{ section_id }}:hover {
-  background-color: {{ section.settings.button_hover_background }};
-  color: {{ section.settings.button_hover_text }};
   transform: translateY(-2px);
 }
 
@@ -154,40 +139,7 @@
 .bottom-right{ bottom:8%; right:6%; }
 .center{ top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
 
-@media screen and (max-width: 989px) {
-  .cinematic-heading-{{ section_id }}{
-    font-size: calc({{ section.settings.heading_size | times: 0.8 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
-  }
-}
-
-@media(max-width:768px){
-
-  .cinematic-section{
-    height: {{ section.settings.mobile_height }}vh !important;
-  }
-
-  .cinematic-content{
-    left:0;
-    right:0;
-    padding:24px;
-    max-width: 100%;
-  }
-
-  .cinematic-text{
-    text-align: center;
-  }
-
-  .mobile-bottom-left { bottom: 8%; left: 6%; transform: none; }
-  .mobile-bottom-center { bottom: 8%; left: 50%; transform: translateX(-50%); }
-  .mobile-bottom-right { bottom: 8%; right: 6%; transform: none; }
-  .mobile-top-right { top: 8%; right: 6%; transform: none; }
-  .mobile-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-
-  .cinematic-heading-{{ section_id }}{
-    font-size: calc({{ section.settings.heading_size | times: 0.65 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
-  }
-
-}
+/* Removed raw font size overrides as we now use theme classes */
 
 {% endstyle %}
 
@@ -297,14 +249,16 @@
 "label":"Heading"
 },
 {
-"type":"range",
+"type":"select",
 "id":"heading_size",
-"min": 24,
-"max": 80,
-"step": 4,
-"unit": "px",
-"label":"Heading size",
-"default": 48
+"options": [
+  { "value": "h2", "label": "Small" },
+  { "value": "h1", "label": "Medium" },
+  { "value": "h0", "label": "Large" },
+  { "value": "hxl", "label": "Extra Large" }
+],
+"default": "h1",
+"label":"Heading size"
 },
 {
 "type":"checkbox",
@@ -319,14 +273,15 @@
 "label":"Description"
 },
 {
-"type":"range",
-"id":"description_size",
-"min": 12,
-"max": 24,
-"step": 2,
-"unit": "px",
-"label":"Description size",
-"default": 16
+"type":"select",
+"id":"description_style",
+"options": [
+  { "value": "body", "label": "Body" },
+  { "value": "subtitle", "label": "Subtitle" },
+  { "value": "uppercase", "label": "Uppercase" }
+],
+"default": "body",
+"label": "Description style"
 },
 {
 "type":"checkbox",
@@ -459,64 +414,9 @@
 "default": 90
 },
 {
-"type":"header",
-"content":"Button style"
-},
-{
-"type":"text",
-"id":"button_label",
-"default":"Shop Now",
-"label":"Button Label"
-},
-{
-"type":"url",
-"id":"button_link",
-"label":"Button Link"
-},
-{
-"type":"color",
-"id":"button_background_color",
-"label":"Background",
-"default":"#ffffff"
-},
-{
-"type":"color",
-"id":"button_text_color",
-"label":"Text",
-"default":"#121212"
-},
-{
-"type":"color",
-"id":"button_hover_background",
-"label":"Hover background",
-"default":"#121212"
-},
-{
-"type":"color",
-"id":"button_hover_text",
-"label":"Hover text",
-"default":"#ffffff"
-},
-{
-"type":"range",
-"id":"button_font_size",
-"min": 12,
-"max": 20,
-"step": 1,
-"unit": "px",
-"label":"Font size",
-"default": 16
-},
-{
-"type":"color",
-"id":"button_border_color",
-"label":"Border color",
-"default":"#ffffff"
-},
-{
 "type":"checkbox",
-"id":"button_uppercase",
-"label":"Button uppercase",
+"id":"button_style_secondary",
+"label":"Use secondary button style",
 "default": false
 }
 ],
