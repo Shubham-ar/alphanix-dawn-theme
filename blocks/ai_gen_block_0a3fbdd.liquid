@@ -1,0 +1,851 @@
+{% doc %}
+  @prompt
+    Create a reusable Shopify theme section called "Product Showcase Banner".
+    
+    Purpose:
+    A flexible single-product showcase section that highlights one product using a background image or video with overlay text and a call-to-action button.
+    
+    Layout:
+    • The section should support either a background image or background video.
+    • The media should fill the entire section container.
+    • Overlay a content container on top of the media that includes:
+      - Heading
+      - Description text
+      - Primary button (example: "Shop Now")
+    
+    Customization Requirements:
+    
+    Media
+    • Allow either image OR video background
+    • Video should autoplay, loop, muted
+    • Background media should support overlay gradient option
+    
+    Content Position
+    Allow selecting where the text container appears on desktop:
+    • bottom-left
+    • left-center
+    • right-center
+    • bottom-right
+    • center
+    
+    Mobile Layout
+    • Mobile should default to near full-screen height (about 80–90vh)
+    • Allow separate mobile text positioning options:
+      - bottom-left
+      - bottom-center
+      - bottom-right
+      - top-right
+      - center
+    
+    Section Height (Desktop)
+    Add a height control with options:
+    • Small
+    • Medium
+    • Large
+    • Full Screen
+    • Custom Height
+    
+    If "Custom Height" is selected, allow entering height in px, vh, or rem.
+    
+    Reusable Content
+    Each instance of this section should allow editing:
+    • heading text
+    • description text
+    • button label
+    • button link
+    • text color
+    • optional text shadow for readability
+    
+    Theme Integration
+    • Follow existing theme typography styles
+    • Use theme color variables
+    • Use theme button styles
+    • Ensure spacing follows the theme's spacing system
+    
+    Responsiveness
+    • Ensure text container remains readable on all screen sizes
+    • Support overlay gradient if needed for contrast
+    • Ensure image/video scales correctly without distortion
+    
+    Performance
+    • Use lazy loading for images
+    • Ensure video is optimized and does not block page load
+    
+    The section should be reusable multiple times on the homepage so different products can be showcased with different media and text placements., Improve this section by making the overlay content container responsive, ensuring the text never overlaps edges and automatically adds padding on smaller screens., you are not reusing the stuff that is already defined in the theme, the buttons are different everywhere else, 
+    and also the typography should be inherited from the overall theme of the app, Can you also make toggles to make the text uppercase if required
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% liquid
+  case block.settings.section_height
+    when 'small'
+      assign height_value = '400px'
+    when 'medium'
+      assign height_value = '600px'
+    when 'large'
+      assign height_value = '800px'
+    when 'fullscreen'
+      assign height_value = '100vh'
+    when 'custom'
+      assign height_value = block.settings.custom_height
+  endcase
+
+  case block.settings.content_position_desktop
+    when 'bottom-left'
+      assign desktop_justify = 'flex-start'
+      assign desktop_align = 'flex-end'
+    when 'left-center'
+      assign desktop_justify = 'flex-start'
+      assign desktop_align = 'center'
+    when 'right-center'
+      assign desktop_justify = 'flex-end'
+      assign desktop_align = 'center'
+    when 'bottom-right'
+      assign desktop_justify = 'flex-end'
+      assign desktop_align = 'flex-end'
+    when 'center'
+      assign desktop_justify = 'center'
+      assign desktop_align = 'center'
+  endcase
+
+  case block.settings.content_position_mobile
+    when 'bottom-left'
+      assign mobile_justify = 'flex-start'
+      assign mobile_align = 'flex-end'
+    when 'bottom-center'
+      assign mobile_justify = 'center'
+      assign mobile_align = 'flex-end'
+    when 'bottom-right'
+      assign mobile_justify = 'flex-end'
+      assign mobile_align = 'flex-end'
+    when 'top-right'
+      assign mobile_justify = 'flex-end'
+      assign mobile_align = 'flex-start'
+    when 'center'
+      assign mobile_justify = 'center'
+      assign mobile_align = 'center'
+  endcase
+%}
+
+{% style %}
+  .ai-product-showcase-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ height_value }};
+    overflow: hidden;
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-{{ ai_gen_id }} {
+      height: {{ block.settings.mobile_height }}vh;
+    }
+  }
+
+  .ai-product-showcase-media-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-product-showcase-video-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-product-showcase-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-product-showcase-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+  }
+
+  .ai-product-showcase-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    {% if block.settings.enable_overlay_gradient %}
+      background: linear-gradient(
+        {{ block.settings.gradient_direction }},
+        {{ block.settings.gradient_color_1 }} 0%,
+        {{ block.settings.gradient_color_2 }} 100%
+      );
+    {% endif %}
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-product-showcase-content-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: {{ desktop_justify }};
+    align-items: {{ desktop_align }};
+    padding: 60px;
+    box-sizing: border-box;
+    z-index: 2;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-showcase-content-wrapper-{{ ai_gen_id }} {
+      padding: 40px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-content-wrapper-{{ ai_gen_id }} {
+      justify-content: {{ mobile_justify }};
+      align-items: {{ mobile_align }};
+      padding: 24px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-product-showcase-content-wrapper-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+  }
+
+  .ai-product-showcase-content-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_max_width }}px;
+    width: 100%;
+    text-align: {{ block.settings.text_alignment }};
+    padding: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-content-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+  }
+
+  .ai-product-showcase-heading-{{ ai_gen_id }} {
+    font-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+    font-weight: {{ settings.type_header_font.weight }};
+    font-style: {{ settings.type_header_font.style }};
+    font-size: calc({{ block.settings.heading_size }}px * {{ settings.heading_scale | divided_by: 100.0 }});
+    color: {{ block.settings.text_color }};
+    margin: 0 0 1.6rem 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    {% if block.settings.heading_uppercase %}
+      text-transform: uppercase;
+    {% endif %}
+    {% if block.settings.enable_text_shadow %}
+      text-shadow: {{ block.settings.text_shadow_horizontal }}px {{ block.settings.text_shadow_vertical }}px {{ block.settings.text_shadow_blur }}px {{ block.settings.text_shadow_color }};
+    {% endif %}
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-showcase-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size | times: 0.8 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size | times: 0.65 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
+      margin: 0 0 1.2rem 0;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-product-showcase-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size | times: 0.5 }}px * {{ settings.heading_scale | divided_by: 100.0 }});
+    }
+  }
+
+  .ai-product-showcase-description-{{ ai_gen_id }} {
+    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    font-weight: {{ settings.type_body_font.weight }};
+    font-style: {{ settings.type_body_font.style }};
+    font-size: calc({{ block.settings.description_size }}px * {{ settings.body_scale | divided_by: 100.0 }});
+    color: {{ block.settings.text_color }};
+    margin: 0 0 2.4rem 0;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    {% if block.settings.description_uppercase %}
+      text-transform: uppercase;
+    {% endif %}
+    {% if block.settings.enable_text_shadow %}
+      text-shadow: {{ block.settings.text_shadow_horizontal }}px {{ block.settings.text_shadow_vertical }}px {{ block.settings.text_shadow_blur }}px {{ block.settings.text_shadow_color }};
+    {% endif %}
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-showcase-description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_size | times: 0.9 }}px * {{ settings.body_scale | divided_by: 100.0 }});
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_size | times: 0.85 }}px * {{ settings.body_scale | divided_by: 100.0 }});
+      margin: 0 0 2rem 0;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-product-showcase-description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_size | times: 0.8 }}px * {{ settings.body_scale | divided_by: 100.0 }});
+      margin: 0 0 1.6rem 0;
+    }
+  }
+
+  .ai-product-showcase-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 1.4rem 3.2rem;
+    background-color: {{ block.settings.button_background_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ settings.buttons_radius }}px;
+    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    font-size: calc({{ block.settings.button_font_size }}px * {{ settings.body_scale | divided_by: 100.0 }});
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: {{ settings.buttons_border_thickness }}px solid {{ block.settings.button_border_color }};
+    border-opacity: {{ settings.buttons_border_opacity | divided_by: 100.0 }};
+    white-space: nowrap;
+    box-shadow: {{ settings.buttons_shadow_horizontal_offset }}px {{ settings.buttons_shadow_vertical_offset }}px {{ settings.buttons_shadow_blur }}px rgba({{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity }}, {{ settings.buttons_shadow_opacity | divided_by: 100.0 }});
+    {% if block.settings.button_uppercase %}
+      text-transform: uppercase;
+    {% endif %}
+  }
+
+  .ai-product-showcase-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text }};
+    transform: translateY(-2px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-showcase-button-{{ ai_gen_id }} {
+      padding: 1.2rem 2.8rem;
+      font-size: calc({{ block.settings.button_font_size | times: 0.9 }}px * {{ settings.body_scale | divided_by: 100.0 }});
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-product-showcase-button-{{ ai_gen_id }} {
+      padding: 1rem 2.4rem;
+      font-size: calc({{ block.settings.button_font_size | times: 0.85 }}px * {{ settings.body_scale | divided_by: 100.0 }});
+      white-space: normal;
+    }
+  }
+
+  .ai-product-showcase-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+{% endstyle %}
+
+<product-showcase-{{ ai_gen_id }} class="ai-product-showcase-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.media_type == 'video' and block.settings.video_url != blank %}
+    <video
+      class="ai-product-showcase-video-{{ ai_gen_id }}"
+      autoplay
+      loop
+      muted
+      playsinline
+    >
+      <source src="{{ block.settings.video_url }}" type="video/mp4">
+    </video>
+  {% elsif block.settings.background_image %}
+    <img
+      src="{{ block.settings.background_image | image_url: width: 2000 }}"
+      alt="{{ block.settings.background_image.alt | escape }}"
+      loading="lazy"
+      width="{{ block.settings.background_image.width }}"
+      height="{{ block.settings.background_image.height }}"
+      class="ai-product-showcase-media-{{ ai_gen_id }}"
+    >
+  {% else %}
+    <div class="ai-product-showcase-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      <div class="ai-product-showcase-empty-state-{{ ai_gen_id }}">
+        Next, add a background image or video
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="ai-product-showcase-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-product-showcase-content-wrapper-{{ ai_gen_id }}">
+    <div class="ai-product-showcase-content-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-product-showcase-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+
+      {% if block.settings.description != blank %}
+        <div class="ai-product-showcase-description-{{ ai_gen_id }}">
+          {{ block.settings.description }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.button_label != blank %}
+        <a
+          href="{{ block.settings.button_link }}"
+          class="ai-product-showcase-button-{{ ai_gen_id }}"
+        >
+          {{ block.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</product-showcase-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductShowcase{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const video = this.querySelector('.ai-product-showcase-video-{{ ai_gen_id }}');
+        if (video) {
+          video.play().catch(function(error) {
+            console.log('Video autoplay failed:', error);
+          });
+        }
+      }
+    }
+
+    customElements.define('product-showcase-{{ ai_gen_id }}', ProductShowcase{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product showcase banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "MP4 format recommended. Use a short, optimized video for best performance."
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_overlay_gradient",
+      "label": "Enable overlay gradient",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "gradient_direction",
+      "label": "Gradient direction",
+      "options": [
+        {
+          "value": "to bottom",
+          "label": "Top to bottom"
+        },
+        {
+          "value": "to top",
+          "label": "Bottom to top"
+        },
+        {
+          "value": "to right",
+          "label": "Left to right"
+        },
+        {
+          "value": "to left",
+          "label": "Right to left"
+        }
+      ],
+      "default": "to bottom"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Gradient start color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Gradient end color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "header",
+      "content": "Section height"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Desktop height",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "fullscreen",
+          "label": "Full screen"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "text",
+      "id": "custom_height",
+      "label": "Custom height",
+      "default": "600px",
+      "info": "Enter value with unit (e.g., 500px, 80vh, 30rem)"
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Mobile height",
+      "default": 85
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Discover our featured product"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Experience premium quality and exceptional design with our latest collection.</p>"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Content position"
+    },
+    {
+      "type": "select",
+      "id": "content_position_desktop",
+      "label": "Desktop position",
+      "options": [
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "left-center",
+          "label": "Left center"
+        },
+        {
+          "value": "right-center",
+          "label": "Right center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left-center"
+    },
+    {
+      "type": "select",
+      "id": "content_position_mobile",
+      "label": "Mobile position",
+      "options": [
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        },
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "bottom-center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 600
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 48
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_uppercase",
+      "label": "Heading uppercase",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Description size",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "description_uppercase",
+      "label": "Description uppercase",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_shadow",
+      "label": "Enable text shadow",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "text_shadow_horizontal",
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow horizontal offset",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_shadow_vertical",
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "text_shadow_blur",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "text_shadow_color",
+      "label": "Shadow color",
+      "default": "rgba(0,0,0,0.5)"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_uppercase",
+      "label": "Button uppercase",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product showcase banner"
+    }
+  ]
+}
+{% endschema %}

@@ -5,7 +5,7 @@
   .pgrid-{{ ai_gen_id }} {
     display: block;
     width: 100%;
-    padding: 80px 0;
+    padding: 80px 0 0;
     background-color: {{ block.settings.background_color }};
     overflow: hidden;
   }
@@ -364,7 +364,7 @@
   /* ===== RESPONSIVE ===== */
   @media screen and (max-width: 989px) {
     .pgrid-{{ ai_gen_id }} {
-      padding: 60px 0;
+      padding: 60px 0 0;
     }
 
     .pgrid-inner-{{ ai_gen_id }} {
@@ -385,7 +385,7 @@
 
   @media screen and (max-width: 749px) {
     .pgrid-{{ ai_gen_id }} {
-      padding: 40px 0;
+      padding: 40px 0 0;
     }
 
     .pgrid-inner-{{ ai_gen_id }} {
@@ -400,6 +400,9 @@
     .pgrid-tabs-{{ ai_gen_id }} {
       gap: 0;
       overflow-x: auto;
+      overflow-y: hidden;
+      touch-action: pan-y;
+      height: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       justify-content: flex-start;
