@@ -5,15 +5,32 @@
   .pgrid-{{ ai_gen_id }} {
     display: block;
     width: 100%;
-    padding: 80px 0 0;
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+    margin-top: {{ block.settings.margin_top }}px;
+    margin-bottom: {{ block.settings.margin_bottom }}px;
     background-color: {{ block.settings.background_color }};
     overflow: hidden;
   }
 
   .pgrid-inner-{{ ai_gen_id }} {
-    max-width: 1400px;
+    {% if block.settings.full_width %}
+      max-width: 100%;
+      padding: 0 2rem;
+    {% else %}
+      max-width: var(--page-width);
+      padding: 0 1.5rem;
+    {% endif %}
     margin: 0 auto;
-    padding: 0 40px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .pgrid-inner-{{ ai_gen_id }} {
+      {% if block.settings.full_width %}
+        padding: 0 5rem;
+      {% else %}
+        padding: 0 5rem;
+      {% endif %}
+    }
   }
 
   /* ===== TAB NAVIGATION ===== */
@@ -104,6 +121,20 @@
     gap: {{ block.settings.product_gap }}px;
   }
 
+  /* Responsive columns for full-width mode */
+  {% if block.settings.full_width %}
+    @media screen and (min-width: 1400px) {
+      .pgrid-products-{{ ai_gen_id }} {
+        grid-template-columns: repeat({{ block.settings.products_per_row | plus: 1 }}, 1fr);
+      }
+    }
+    @media screen and (min-width: 1920px) {
+      .pgrid-products-{{ ai_gen_id }} {
+        grid-template-columns: repeat({{ block.settings.products_per_row | plus: 2 }}, 1fr);
+      }
+    }
+  {% endif %}
+
   /* ===== PRODUCT CARD ===== */
   .pgrid-card-{{ ai_gen_id }} {
     position: relative;
@@ -138,6 +169,16 @@
      width: 100%;
      height: 100%;
      object-fit: cover;
+  }
+
+  @media screen and (max-width: 749px) {
+    .pgrid-img-wrap-{{ ai_gen_id }} {
+      {% if block.settings.mobile_image_aspect_ratio != 'auto' %}
+        aspect-ratio: {{ block.settings.mobile_image_aspect_ratio }};
+      {% else %}
+        aspect-ratio: auto;
+      {% endif %}
+    }
   }
 
   .pgrid-img-{{ ai_gen_id }} {
@@ -260,7 +301,8 @@
     font-size: {{ block.settings.product_title_size }}px;
     color: {{ block.settings.product_title_color }};
     margin: 0 0 6px;
-    font-weight: 500;
+    font-weight: {{ block.settings.product_title_weight }};
+    {% if block.settings.product_title_uppercase %}text-transform: uppercase;{% endif %}
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -271,7 +313,7 @@
   .pgrid-price-{{ ai_gen_id }} {
     font-size: {{ block.settings.product_price_size }}px;
     color: {{ block.settings.product_price_color }};
-    font-weight: 600;
+    font-weight: {{ block.settings.product_price_weight }};
     letter-spacing: 0.5px;
     text-align: left !important;
   }
@@ -347,7 +389,7 @@
   /* ===== RESPONSIVE ===== */
   @media screen and (max-width: 989px) {
     .pgrid-{{ ai_gen_id }} {
-      padding: 60px 0 0;
+      padding: {{ block.settings.padding_top | times: 0.75 | round }}px 0 {{ block.settings.padding_bottom | times: 0.75 | round }}px;
     }
 
     .pgrid-inner-{{ ai_gen_id }} {
@@ -368,15 +410,35 @@
 
   @media screen and (max-width: 749px) {
     .pgrid-{{ ai_gen_id }} {
-      padding: 40px 0 0;
+      padding: {{ block.settings.padding_top | times: 0.5 | round }}px 0 {{ block.settings.padding_bottom | times: 0.5 | round }}px;
     }
 
     .pgrid-inner-{{ ai_gen_id }} {
       padding: 0 16px;
     }
 
+    .pgrid-card-{{ ai_gen_id }} {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .pgrid-card-{{ ai_gen_id }}:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .pgrid-img-{{ ai_gen_id }},
+    .pgrid-card-{{ ai_gen_id }}:hover .pgrid-img-{{ ai_gen_id }}:first-child {
+      transform: none !important;
+    }
+
+    .pgrid-img-secondary-{{ ai_gen_id }},
+    .pgrid-card-{{ ai_gen_id }}:hover .pgrid-img-secondary-{{ ai_gen_id }} {
+       display: none !important;
+    }
+
     .pgrid-products-{{ ai_gen_id }} {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat({{ block.settings.mobile_products_per_row }}, 1fr);
       gap: 10px;
     }
 
@@ -388,7 +450,7 @@
       height: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      justify-content: flex-start;
+      justify-content: center;
       padding: 0 16px;
       margin-bottom: 30px;
     }
@@ -405,10 +467,7 @@
     }
 
     .pgrid-quickadd-{{ ai_gen_id }} {
-      transform: translateY(0);
-      position: relative;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 10px;
+      display: none !important;
     }
 
     .pgrid-size-btn-{{ ai_gen_id }} {
@@ -419,7 +478,7 @@
     }
 
     .pgrid-info-{{ ai_gen_id }} {
-      padding: 10px;
+      padding: 10px 0; /* Keep horizontal at 0 for photo alignment */
     }
 
     .pgrid-title-{{ ai_gen_id }} {
@@ -830,12 +889,38 @@
     {
       "type": "range",
       "id": "product_gap",
-      "label": "Product gap",
+      "label": "Product gap (Desktop)",
       "min": 5,
       "max": 40,
       "step": 5,
       "unit": "px",
       "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "mobile_products_per_row",
+      "label": "Products per row (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_aspect_ratio",
+      "label": "Image aspect ratio (Mobile)",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "2/3", "label": "Tall (2:3)" },
+        { "value": "auto", "label": "Adapt to image" }
+      ],
+      "default": "3/4"
     },
     {
       "type": "header",
@@ -927,7 +1012,7 @@
     },
     {
       "type": "header",
-      "content": "Typography"
+      "content": "Typography — Product cards"
     },
     {
       "type": "range",
@@ -940,6 +1025,24 @@
       "default": 14
     },
     {
+      "type": "select",
+      "id": "product_title_weight",
+      "label": "Product title weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "checkbox",
+      "id": "product_title_uppercase",
+      "label": "Product title uppercase",
+      "default": false
+    },
+    {
       "type": "range",
       "id": "product_price_size",
       "label": "Product price size",
@@ -948,6 +1051,18 @@
       "step": 1,
       "unit": "px",
       "default": 14
+    },
+    {
+      "type": "select",
+      "id": "product_price_weight",
+      "label": "Product price weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
     },
     {
       "type": "header",
@@ -990,6 +1105,56 @@
       "id": "button_style_secondary",
       "label": "Use secondary button style",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section layout & spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Make section full width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40 
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [
