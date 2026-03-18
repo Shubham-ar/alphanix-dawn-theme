@@ -89,8 +89,10 @@
               You're <strong>{{ amount_left }}</strong> away from Free Standard Shipping
             </p>
           {%- endif -%}
-          <div class="free-shipping-bar-container">
-            <div class="free-shipping-bar" style="width: {{ subtotal_percentage }}%;" {% if cart_total >= threshold_in_cents %}data-complete="true"{% endif %}></div>
+          <progress class="free-shipping-progress" value="{{ subtotal_percentage }}" max="100"></progress>
+          <div class="free-shipping-bar-labels">
+            <span>$0</span>
+            <span>{{ settings.cart_free_shipping_threshold | times: 100 | money_without_trailing_zeros }}</span>
           </div>
         </div>
       {%- endif -%}
