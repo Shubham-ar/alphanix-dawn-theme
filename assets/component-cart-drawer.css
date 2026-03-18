@@ -44,14 +44,21 @@
   justify-content: center;
 }
 
+/* FIX: Empty cart — use flex column so header + content stack properly */
 cart-drawer.is-empty .drawer__inner {
-  display: grid;
-  grid-template-rows: 1fr;
-  align-items: center;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--cart-drawer-padding, 2rem);
 }
 
+/* FIX: Show the header (with its close X) even when cart is empty */
 cart-drawer.is-empty .drawer__header {
+  display: flex;
+}
+
+/* FIX: Hide free shipping bar and cart items when empty */
+cart-drawer.is-empty .cart-drawer__free-shipping,
+cart-drawer.is-empty cart-drawer-items {
   display: none;
 }
 
@@ -414,27 +421,31 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 }
 
 
-/* Free Shipping Bar */
+/* ============================================================
+   Free Shipping Bar
+   ============================================================ */
 .cart-drawer__free-shipping {
   padding: 0 0 1.5rem 0;
   border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.1);
   margin-bottom: 1.5rem;
 }
+
 .free-shipping-text {
   margin: 0 0 0.8rem 0;
   font-size: 1.3rem;
   line-height: 1.5;
 }
 
+.free-shipping-text strong {
+  font-weight: bold;
+}
+
 .free-shipping-text[data-complete="true"]::before {
-  content: "✓ ";
+  content: "✓  ";
   color: #12b76a;
   font-weight: bold;
 }
 
-.free-shipping-text strong {
-  font-weight: bold;
-}
 .free-shipping-bar-container {
   width: 100%;
   height: 0.6rem;
@@ -442,262 +453,22 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   border-radius: 4px;
   overflow: hidden;
 }
+
 .free-shipping-bar {
   height: 100%;
   background-color: #121212;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* FIX: Green bar on completion via data attribute */
 .free-shipping-bar[data-complete="true"] {
   background-color: #12b76a;
 }
 
-/* Product Flex Grid */
-.cart-items-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding-bottom: 2rem;
-}
-.cart-item-flex {
-  display: flex;
-  gap: 1.5rem;
-}
-.cart-item-media {
-  width: 90px;
-  flex-shrink: 0;
-}
-.cart-item-media img {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-  object-fit: cover;
-}
-.cart-item-details {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-.cart-item-header-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-}
-.cart-item__name {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-decoration: none;
-  line-height: 1.2;
-}
-.cart-item__price-totals {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-}
-.cart-item-variants {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0.5rem 0 1rem;
-  font-size: 1.2rem;
-  opacity: 0.7;
-}
-.cart-item-variants .product-option {
-  display: flex;
-  gap: 0.4rem;
-}
 
-/* Quantity Controls */
-.cart-item-controls {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.cart-item-controls quantity-popover {
-  display: block;
-}
-.cart-item__quantity-wrapper quantity-input {
-  display: flex;
-  border: 1px solid rgba(var(--color-foreground), 0.2);
-  border-radius: 3px;
-  height: 3.6rem;
-  min-height: 3.6rem;
-  width: max-content;
-}
-.cart-item__quantity-wrapper .quantity__button {
-  width: 3.6rem;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cart-item__quantity-wrapper .quantity__input {
-  width: 4rem;
-  padding: 0;
-  text-align: center;
-  font-weight: 500;
-  font-size: 1.4rem;
-  border: none;
-}
-.cart-remove-button-text {
-  background: none;
-  border: none;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  font-size: 1.2rem;
-  color: rgba(var(--color-foreground), 0.7);
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: color 0.2s ease;
-}
-.cart-remove-button-text:hover {
-  color: rgb(var(--color-foreground));
-}
-
-/* Upsell Collection */
-.cart-drawer__upsell {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-bottom: 2rem solid transparent;
-  border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
-}
-.upsell-title {
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-}
-.upsell-grid {
-  display: flex;
-  overflow-x: auto;
-  gap: 1.5rem;
-  padding-bottom: 1rem;
-  scroll-snap-type: x mandatory;
-}
-.upsell-grid::-webkit-scrollbar {
-  display: none;
-}
-.upsell-card {
-  flex: 0 0 120px;
-  scroll-snap-align: start;
-}
-.upsell-card-image-wrap {
-  display: block;
-  background: rgba(var(--color-foreground), 0.04);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 0.8rem;
-}
-.upsell-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  display: block;
-}
-.upsell-card-details {
-  display: flex;
-  flex-direction: column;
-}
-.upsell-title-link {
-  font-size: 1.1rem;
-  text-decoration: none;
-  font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: 0.4rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.upsell-price {
-  font-size: 1.1rem;
-  opacity: 0.8;
-  margin-bottom: 0.6rem;
-}
-.upsell-add-button {
-  background: rgba(var(--color-foreground), 0.08);
-  border: none;
-  border-radius: 3px;
-  padding: 0.6rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-.upsell-add-button:hover {
-  background: rgba(var(--color-foreground), 0.15);
-}
-
-/* Sticky Footer Overrides */
-.drawer__footer {
-  position: sticky;
-  bottom: 0;
-  background-color: rgb(var(--color-background));
-  z-index: 10;
-  box-shadow: 0 -10px 20px rgba(var(--color-background), 1);
-}
-.cart__checkout-button {
-  width: 100%;
-  border-radius: var(--buttons-radius, 4px) !important;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 1.5rem;
-  padding: 1.8rem !important;
-}
-
-/* Mobile iOS Sheet Transition */
-@media screen and (max-width: 749px) {
-  .drawer {
-    align-items: flex-end; /* Align drawer to bottom */
-  }
-  .drawer__inner {
-    width: 100vw;
-    max-width: 100vw;
-    height: 85vh; /* 85% of screen height */
-    border-radius: 12px 12px 0 0;
-    transform: translateY(100%); /* Slide down out of view */
-    border-right: 0.1rem solid rgba(var(--color-foreground), 0.2);
-    border-bottom: auto;
-  }
-  .drawer.active .drawer__inner {
-    transform: translateY(0); /* Slide up into view */
-  }
-  .drawer__header {
-    padding-top: 2rem !important;
-  }
-  .drawer__close {
-    top: 15px;
-    right: 5px;
-  }
-}
-
-/* ============================================
-   FIX 2: Empty cart — hide elements that 
-   bleed into the single-row grid layout
-   ============================================ */
-cart-drawer.is-empty .cart-drawer__free-shipping,
-cart-drawer.is-empty cart-drawer-items {
-  display: none;
-}
-
-/* ============================================
-   FIX 3 + EMPTY CART POLISH:
-   Center the empty state content cleanly,
-   restore padding, add proper close button
-   ============================================ */
-cart-drawer.is-empty .drawer__inner {
-  display: flex;
-  flex-direction: column;
-  padding: var(--cart-drawer-padding, 2rem);
-}
-
-/* Show the header (with its close X) even when empty */
-cart-drawer.is-empty .drawer__header {
-  display: flex;
-}
-
-/* Style the empty content area */
+/* ============================================================
+   Empty Cart State
+   ============================================================ */
 .cart-drawer__empty-content {
   flex: 1;
   display: flex;
@@ -709,8 +480,8 @@ cart-drawer.is-empty .drawer__header {
   padding: 4rem 0;
 }
 
-/* Hide the redundant close button inside empty-content 
-   since we're now showing the header one */
+/* Hide the redundant close button inside empty content —
+   the header close button is now visible instead */
 .cart-drawer__empty-content .drawer__close {
   display: none;
 }
@@ -723,4 +494,271 @@ cart-drawer.is-empty .drawer__header {
 
 .cart__login-title {
   margin-top: 1rem;
+}
+
+
+/* ============================================================
+   Product Flex Grid
+   ============================================================ */
+.cart-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 2rem;
+}
+
+.cart-item-flex {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.cart-item-media {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.cart-item-media img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-item-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.cart-item__name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.cart-item__price-totals {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-item-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1rem;
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.cart-item-variants .product-option {
+  display: flex;
+  gap: 0.4rem;
+}
+
+
+/* ============================================================
+   Quantity Controls
+   ============================================================ */
+.cart-item-controls {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item-controls quantity-popover {
+  display: block;
+}
+
+.cart-item__quantity-wrapper quantity-input {
+  display: flex;
+  border: 1px solid rgba(var(--color-foreground), 0.2);
+  border-radius: 3px;
+  height: 3.6rem;
+  min-height: 3.6rem;
+  width: max-content;
+}
+
+.cart-item__quantity-wrapper .quantity__button {
+  width: 3.6rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-item__quantity-wrapper .quantity__input {
+  width: 4rem;
+  padding: 0;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.4rem;
+  border: none;
+}
+
+.cart-remove-button-text {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.7);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.cart-remove-button-text:hover {
+  color: rgb(var(--color-foreground));
+}
+
+
+/* ============================================================
+   Upsell Collection
+   ============================================================ */
+.cart-drawer__upsell {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-bottom: 2rem solid transparent;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.1);
+}
+
+.upsell-title {
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.upsell-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+
+.upsell-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.upsell-card {
+  flex: 0 0 120px;
+  scroll-snap-align: start;
+}
+
+.upsell-card-image-wrap {
+  display: block;
+  background: rgba(var(--color-foreground), 0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+
+.upsell-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.upsell-card-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.upsell-title-link {
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.upsell-price {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin-bottom: 0.6rem;
+}
+
+.upsell-add-button {
+  background: rgba(var(--color-foreground), 0.08);
+  border: none;
+  border-radius: 3px;
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.upsell-add-button:hover {
+  background: rgba(var(--color-foreground), 0.15);
+}
+
+
+/* ============================================================
+   Sticky Footer
+   ============================================================ */
+.drawer__footer {
+  position: sticky;
+  bottom: 0;
+  background-color: rgb(var(--color-background));
+  z-index: 10;
+  box-shadow: 0 -10px 20px rgba(var(--color-background), 1);
+}
+
+.cart__checkout-button {
+  width: 100%;
+  border-radius: var(--buttons-radius, 4px) !important;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 1.5rem;
+  padding: 1.8rem !important;
+}
+
+
+/* ============================================================
+   Mobile — iOS Sheet Transition
+   ============================================================ */
+@media screen and (max-width: 749px) {
+  .drawer {
+    align-items: flex-end;
+  }
+
+  .drawer__inner {
+    width: 100vw;
+    max-width: 100vw;
+    height: 85vh;
+    border-radius: 12px 12px 0 0;
+    transform: translateY(100%);
+    border-right: 0.1rem solid rgba(var(--color-foreground), 0.2);
+    border-bottom: auto;
+  }
+
+  .drawer.active .drawer__inner {
+    transform: translateY(0);
+  }
+
+  .drawer__header {
+    padding-top: 2rem !important;
+  }
+
+  .drawer__close {
+    top: 15px;
+    right: 5px;
+  }
 }
