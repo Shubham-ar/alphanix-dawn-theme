@@ -253,21 +253,24 @@ class QuantityInput extends HTMLElement {
         this.input.stepUp();
       }
     } else {
-      this.input.stepDown();
+      // If pressing minus and we are at the minimum quantity limit (from data-min, usually 1)
+      // or the value is 1, lower it directly to 0 to trigger cart item removal
+      if (this.input.value === this.input.dataset.min || this.input.value === '1') {
+        this.input.value = 0;
+      } else {
+        this.input.stepDown();
+      }
     }
 
     if (previousValue !== this.input.value) this.input.dispatchEvent(this.changeEvent);
-
-    if (this.input.dataset.min === previousValue && event.target.name === 'minus') {
-      this.input.value = parseInt(this.input.min);
-    }
   }
 
   validateQtyRules() {
     const value = parseInt(this.input.value);
     if (this.input.min) {
       const buttonMinus = this.querySelector(".quantity__button[name='minus']");
-      buttonMinus.classList.toggle('disabled', parseInt(value) <= parseInt(this.input.min));
+      // Disable minus only if value is 0 (so we can't go below 0)
+      buttonMinus.classList.toggle('disabled', value <= 0);
     }
     if (this.input.max) {
       const max = parseInt(this.input.max);
