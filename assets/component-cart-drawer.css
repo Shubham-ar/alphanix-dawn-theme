@@ -421,12 +421,17 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   margin-bottom: 1.5rem;
 }
 .free-shipping-text {
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.8rem 0;
   font-size: 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  line-height: 1.5;
 }
+
+.free-shipping-text[data-complete="true"]::before {
+  content: "✓ ";
+  color: #12b76a;
+  font-weight: bold;
+}
+
 .free-shipping-text strong {
   font-weight: bold;
 }
@@ -442,7 +447,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   background-color: #121212;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.free-shipping-text.success + .free-shipping-bar-container .free-shipping-bar {
+.free-shipping-bar[data-complete="true"] {
   background-color: #12b76a;
 }
 
@@ -665,4 +670,57 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
     top: 15px;
     right: 5px;
   }
+}
+
+/* ============================================
+   FIX 2: Empty cart — hide elements that 
+   bleed into the single-row grid layout
+   ============================================ */
+cart-drawer.is-empty .cart-drawer__free-shipping,
+cart-drawer.is-empty cart-drawer-items {
+  display: none;
+}
+
+/* ============================================
+   FIX 3 + EMPTY CART POLISH:
+   Center the empty state content cleanly,
+   restore padding, add proper close button
+   ============================================ */
+cart-drawer.is-empty .drawer__inner {
+  display: flex;
+  flex-direction: column;
+  padding: var(--cart-drawer-padding, 2rem);
+}
+
+/* Show the header (with its close X) even when empty */
+cart-drawer.is-empty .drawer__header {
+  display: flex;
+}
+
+/* Style the empty content area */
+.cart-drawer__empty-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 4rem 0;
+}
+
+/* Hide the redundant close button inside empty-content 
+   since we're now showing the header one */
+.cart-drawer__empty-content .drawer__close {
+  display: none;
+}
+
+.cart__empty-text {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cart__login-title {
+  margin-top: 1rem;
 }

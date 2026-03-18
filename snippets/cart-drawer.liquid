@@ -74,31 +74,32 @@
           </span>
         </button>
       </div>
-        {%- if settings.cart_free_shipping_threshold != blank -%}
-          {%- liquid
-            assign threshold_in_cents = settings.cart_free_shipping_threshold | times: 100
-            assign cart_total = cart.total_price
-            assign subtotal_percentage = cart_total | times: 100 | divided_by: threshold_in_cents
-            if subtotal_percentage > 100
-              assign subtotal_percentage = 100
-            endif
-          -%}
-          <div class="cart-drawer__free-shipping">
-            {%- if cart_total >= threshold_in_cents -%}
-              <p class="free-shipping-text">
-                 You've qualified for Free Standard Shipping
-              </p>
-            {%- else -%}
-              {%- assign amount_left = threshold_in_cents | minus: cart_total | money -%}
-              <p class="free-shipping-text">
-                You are <strong>{{ amount_left }}</strong> away from Free Standard Shipping
-              </p>
-            {%- endif -%}
-            <div class="free-shipping-bar-container">
-              <div class="free-shipping-bar" style="width: {{ subtotal_percentage }}%;"></div>
-            </div>
+
+      {%- if settings.cart_free_shipping_threshold != blank -%}
+        {%- liquid
+          assign threshold_in_cents = settings.cart_free_shipping_threshold | times: 100
+          assign cart_total = cart.total_price
+          assign subtotal_percentage = cart_total | times: 100 | divided_by: threshold_in_cents
+          if subtotal_percentage > 100
+            assign subtotal_percentage = 100
+          endif
+        -%}
+        <div class="cart-drawer__free-shipping">
+          {%- if cart_total >= threshold_in_cents -%}
+            <p class="free-shipping-text" data-complete="true">
+              You've unlocked Free Standard Shipping
+            </p>
+          {%- else -%}
+            {%- assign amount_left = threshold_in_cents | minus: cart_total | money -%}
+            <p class="free-shipping-text">
+              You're <strong>{{ amount_left }}</strong> away from Free Standard Shipping
+            </p>
+          {%- endif -%}
+          <div class="free-shipping-bar-container">
+            <div class="free-shipping-bar" style="width: {{ subtotal_percentage }}%;" {% if cart_total >= threshold_in_cents %}data-complete="true"{% endif %}></div>
           </div>
-        {%- endif -%}
+        </div>
+      {%- endif -%}
 
       <cart-drawer-items
         {% if cart == empty %}
@@ -117,7 +118,7 @@
                 <div class="cart-items-grid">
                   {%- for item in cart.items -%}
                     <div id="CartDrawer-Item-{{ item.index | plus: 1 }}" class="cart-item-flex {% if item.parent_relationship.parent != null %} cart-item__nested-line{% endif %}">
-                      
+
                       <div class="cart-item-media">
                         {% if item.image %}
                           <a href="{{ item.url }}" tabindex="-1" aria-hidden="true" style="display: block;">
@@ -129,7 +130,7 @@
                       <div class="cart-item-details">
                         <div class="cart-item-header-flex">
                           <a href="{{ item.url }}" class="cart-item__name h4 break">{{- item.product.title | escape -}}</a>
-                          
+
                           <div class="cart-item__price-totals">
                             {%- if item.original_line_price != item.final_line_price -%}
                               <s class="cart-item__old-price price">{{ item.original_line_price | money }}</s>
@@ -191,7 +192,7 @@
           </div>
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
-      
+
         {%- if settings.cart_upsell_collection != blank -%}
           <div class="cart-drawer__upsell">
             <h3 class="upsell-title">ADD A LITTLE EXTRA</h3>
@@ -216,7 +217,9 @@
             </div>
           </div>
         {%- endif -%}
-</cart-drawer-items>
+
+      </cart-drawer-items>
+
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">
