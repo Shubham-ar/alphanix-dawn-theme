@@ -15,6 +15,7 @@
         "step_1": {
           "type": "step",
           "settings": {
+            "scroll_duration": 100,
             "heading": "<em><strong>HARDER REPS. CLEANER LOOKS</strong></em>",
             "heading_size": "hxl",
             "heading_uppercase": true,
@@ -26,6 +27,11 @@
             "vertical_alignment": "center",
             "text_alignment": "center",
             "content_max_width": 700,
+            "mobile_heading_size": "h1",
+            "mobile_horizontal_alignment": "center",
+            "mobile_vertical_alignment": "center",
+            "mobile_text_alignment": "center",
+            "mobile_content_max_width": 340,
             "button_label": "",
             "button_link": "/collections/all",
             "button_style_secondary": true,
@@ -37,6 +43,7 @@
         "step_7LJjAN": {
           "type": "step",
           "settings": {
+            "scroll_duration": 100,
             "heading": "<em>THE LAST TEE YOULL EVER NEED</em>",
             "heading_size": "h1",
             "heading_uppercase": true,
@@ -48,6 +55,11 @@
             "vertical_alignment": "center",
             "text_alignment": "center",
             "content_max_width": 700,
+            "mobile_heading_size": "h1",
+            "mobile_horizontal_alignment": "center",
+            "mobile_vertical_alignment": "center",
+            "mobile_text_alignment": "center",
+            "mobile_content_max_width": 340,
             "button_label": "SHOP NOW",
             "button_link": "shopify://collections",
             "button_style_secondary": false,
@@ -70,6 +82,9 @@
         "gradient_direction": "to bottom",
         "gradient_color_1": "#000000",
         "gradient_color_2": "rgba(0,0,0,0)",
+        "desktop_height": 100,
+        "mobile_height": 100,
+        "persist_last_step": true,
         "padding_top": 0,
         "padding_bottom": 0
       }
@@ -92,9 +107,11 @@
             "collection_3": "premium",
             "tab_3_button_text": "View all",
             "tab_3_button_url": "",
-            "products_to_show": 9,
-            "products_per_row": 3,
+            "products_to_show": 12,
+            "products_per_row": 4,
             "product_gap": 5,
+            "mobile_products_per_row": 2,
+            "mobile_image_aspect_ratio": "3/4",
             "quick_add_title": "Quick add",
             "tab_font_size": 14,
             "tab_font_weight": "600",
@@ -107,11 +124,19 @@
             "product_title_color": "#121212",
             "product_price_color": "#121212",
             "product_title_size": 14,
+            "product_title_weight": "500",
+            "product_title_uppercase": false,
             "product_price_size": 14,
+            "product_price_weight": "600",
             "image_aspect_ratio": "3/4",
             "card_border_radius": 0,
             "card_padding": 15,
-            "button_style_secondary": true
+            "button_style_secondary": true,
+            "full_width": false,
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "margin_top": 0,
+            "margin_bottom": 0
           },
           "blocks": {}
         }
@@ -137,7 +162,7 @@
             "gradient_color_2": "rgba(0,0,0,0)",
             "section_height": "custom",
             "custom_height": "40vh",
-            "mobile_height": 100,
+            "mobile_height": 50,
             "heading": "Discover our featured product",
             "description": "<p>Experience premium quality and exceptional design with our latest collection.</p>",
             "button_label": "Shop now",
@@ -222,7 +247,7 @@
         "text_alignment": "left",
         "content_max_width": 500,
         "section_height": "40vh",
-        "mobile_height": 100,
+        "mobile_height": 50,
         "button_style_secondary": false
       }
     },
@@ -271,7 +296,7 @@
             "gradient_color_2": "rgba(0,0,0,0)",
             "section_height": "custom",
             "custom_height": "40vh",
-            "mobile_height": 100,
+            "mobile_height": 50,
             "heading": "Premium Tees Built Different",
             "description": "<p>Engineered for comfort, designed for style, experience the perfect fit</p>",
             "button_label": "Shop now",
