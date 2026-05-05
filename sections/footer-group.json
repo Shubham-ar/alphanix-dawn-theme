@@ -19,7 +19,24 @@
           "settings": {
             "heading": "ALPHANIX",
             "subtext": "<p>Premium men's t-shirts designed for everyday comfort and style.</p>",
-            "show_social": true
+            "show_social": true,
+            "default_open": false
+          }
+        },
+        "link_list_shop": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu",
+            "default_open": false
+          }
+        },
+        "link_list_support": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Support",
+            "menu": "footer",
+            "default_open": false
           }
         },
         "newsletter": {
@@ -29,41 +46,22 @@
             "subtext": "<p>Get exclusive offers and updates.</p>",
             "button_label": "SUBSCRIBE"
           }
-        },
-        "link_list_shop": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Shop",
-            "menu": "main-menu"
-          }
-        },
-        "link_list_support": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Support",
-            "menu": "footer"
-          }
         }
       },
       "block_order": [
         "brand",
-        "newsletter",
         "link_list_shop",
-        "link_list_support"
+        "link_list_support",
+        "newsletter"
       ],
       "settings": {
         "color_scheme": "scheme-1",
-        "heading_bold": true,
-        "heading_size": 1.6,
         "enable_follow_on_shop": true,
         "show_social": true,
         "enable_country_selector": true,
         "enable_language_selector": true,
         "payment_enable": true,
         "show_policy": true,
-        "mobile_block_spacing": 40,
-        "desktop_block_spacing": 0,
-        "column_gap": 32,
         "margin_top": 0,
         "padding_top": 36,
         "padding_bottom": 36

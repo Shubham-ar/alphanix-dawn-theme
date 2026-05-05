@@ -162,15 +162,15 @@
             "gradient_color_2": "rgba(0,0,0,0)",
             "section_height": "custom",
             "custom_height": "40vh",
-            "mobile_height": 50,
+            "mobile_height": 80,
             "heading": "Discover our featured product",
             "description": "<p>Experience premium quality and exceptional design with our latest collection.</p>",
             "button_label": "Shop now",
             "button_link": "",
             "content_position_desktop": "bottom-left",
-            "content_position_mobile": "bottom-center",
+            "content_position_mobile": "center",
             "content_max_width": 600,
-            "text_alignment": "left",
+            "text_alignment": "center",
             "heading_size": "h2",
             "heading_uppercase": true,
             "description_style": "body",
@@ -214,7 +214,7 @@
         "show_vendor": false,
         "show_rating": false,
         "quick_add": "standard",
-        "columns_mobile": "2",
+        "columns_mobile": "1",
         "swipe_on_mobile": true,
         "padding_top": 0,
         "padding_bottom": 0
@@ -223,7 +223,38 @@
     "cinematic_showcase": {
       "type": "cinematic-product-showcase",
       "settings": {
-        "image": "shopify://shop_images/general-clothing-bold-4.jpg",
+        "image": "shopify://shop_images/Gemini_Generated_Image_s2zp4bs2zp4bs2zp.png",
+        "video": "",
+        "enable_overlay_gradient": true,
+        "overlay_opacity": 40,
+        "gradient_direction": "to bottom",
+        "gradient_color_1": "#000000",
+        "gradient_color_2": "rgba(0,0,0,0)",
+        "heading": "Oversized Heavyweight Tee",
+        "heading_size": "h1",
+        "heading_uppercase": false,
+        "description": "<p>Built for strength. Designed for everyday performance.</p>",
+        "description_style": "body",
+        "description_uppercase": false,
+        "text_color": "#ffffff",
+        "enable_text_shadow": true,
+        "text_shadow_horizontal": 0,
+        "text_shadow_vertical": 2,
+        "text_shadow_blur": 4,
+        "text_shadow_color": "#00000080",
+        "desktop_position": "left-center",
+        "mobile_position": "bottom-center",
+        "text_alignment": "left",
+        "content_max_width": 500,
+        "section_height": "40vh",
+        "mobile_height": 50,
+        "button_style_secondary": false
+      }
+    },
+    "cinematic_product_showcase_q4gLLc": {
+      "type": "cinematic-product-showcase",
+      "settings": {
+        "image": "shopify://shop_images/Gemini_Generated_Image_s2zp4bs2zp4bs2zp.png",
         "video": "",
         "enable_overlay_gradient": true,
         "overlay_opacity": 40,
@@ -274,57 +305,11 @@
         "show_vendor": false,
         "show_rating": false,
         "quick_add": "standard",
-        "columns_mobile": "2",
+        "columns_mobile": "1",
         "swipe_on_mobile": true,
         "padding_top": 20,
         "padding_bottom": 20
       }
-    },
-    "blocks_zQw73y": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_0a3fbdd_HPQNKJ": {
-          "type": "ai_gen_block_0a3fbdd",
-          "settings": {
-            "media_type": "image",
-            "background_image": "shopify://shop_images/general-clothing-bold-5.jpg",
-            "video_url": "",
-            "enable_overlay_gradient": true,
-            "overlay_opacity": 40,
-            "gradient_direction": "to bottom",
-            "gradient_color_1": "#000000",
-            "gradient_color_2": "rgba(0,0,0,0)",
-            "section_height": "custom",
-            "custom_height": "40vh",
-            "mobile_height": 50,
-            "heading": "Premium Tees Built Different",
-            "description": "<p>Engineered for comfort, designed for style, experience the perfect fit</p>",
-            "button_label": "Shop now",
-            "button_link": "",
-            "content_position_desktop": "bottom-right",
-            "content_position_mobile": "bottom-center",
-            "content_max_width": 600,
-            "text_alignment": "right",
-            "heading_size": "h2",
-            "heading_uppercase": true,
-            "description_style": "body",
-            "description_uppercase": true,
-            "text_color": "#ffffff",
-            "enable_text_shadow": true,
-            "text_shadow_horizontal": 0,
-            "text_shadow_vertical": 2,
-            "text_shadow_blur": 4,
-            "text_shadow_color": "#00000080",
-            "button_style_secondary": false
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_0a3fbdd_HPQNKJ"
-      ],
-      "name": "Product showcase banner",
-      "settings": {}
     }
   },
   "order": [
@@ -334,6 +319,6 @@
     "featured_collection_dT9ELn",
     "cinematic_showcase",
     "featured_collection_b4a8H9",
-    "blocks_zQw73y"
+    "cinematic_product_showcase_q4gLLc"
   ]
 }
