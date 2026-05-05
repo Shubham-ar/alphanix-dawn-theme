@@ -3595,3 +3595,107 @@ details-disclosure > details {
     transform: translateX(100%) scaleX(0);
   }
 }
+
+/* =========================================
+   ALPHANIX — Global Design Utilities
+   ========================================= */
+
+.alphanix-section {
+  background-color: #0a0a0a;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.alphanix-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  opacity: 0.6;
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-eyebrow {
+    font-size: 1.2rem;
+  }
+}
+
+.alphanix-eyebrow__accent {
+  color: #C8102E;
+}
+
+.alphanix-heading {
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  font-weight: 700;
+}
+
+.alphanix-border-top {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.alphanix-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.alphanix-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.alphanix-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fade in up animation */
+@keyframes alphanixFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alphanix-fade-in-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.alphanix-fade-in-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Rotating ring animation */
+@keyframes alphanixRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes alphanixRotateReverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Marquee scroll animation */
+@keyframes alphanixMarqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

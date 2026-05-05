@@ -1,6 +1,36 @@
+{%- comment -%}
+  Alphanix style overrides — only loads when the merchant enables Alphanix
+  styling in the Theme Editor → Product → Alphanix style.
+{%- endcomment -%}
+{%- if section.settings.enable_alphanix_style -%}
+  {{ 'alphanix-product.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- liquid
+  assign alphanix_classes = ''
+  if section.settings.enable_alphanix_style
+    assign alphanix_classes = ' alphanix-product'
+  endif
+-%}
+
+{%- if section.settings.enable_alphanix_style -%}
+  {%- liquid
+    assign ax_product_accent_r = section.settings.alphanix_accent_color.red
+    assign ax_product_accent_g = section.settings.alphanix_accent_color.green
+    assign ax_product_accent_b = section.settings.alphanix_accent_color.blue
+    assign ax_product_accent_rgb = ax_product_accent_r | append: ', ' | append: ax_product_accent_g | append: ', ' | append: ax_product_accent_b
+  -%}
+  {%- style -%}
+    #MainProduct-{{ section.id }} {
+      --ax-product-accent: {{ section.settings.alphanix_accent_color }};
+      --ax-product-accent-rgb: {{ ax_product_accent_rgb }};
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
 <product-info
   id="MainProduct-{{ section.id }}"
-  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}{{ alphanix_classes }}"
   data-section="{{ section.id }}"
   data-product-id="{{ product.id }}"
   data-update-url="true"
@@ -73,6 +103,22 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+
+  {%- if section.settings.enable_alphanix_style and section.settings.alphanix_show_breadcrumb -%}
+    <nav class="alphanix-product__breadcrumb page-width" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">{{ section.settings.alphanix_breadcrumb_home_label | default: 'Home' }}</a>
+      <span class="alphanix-product__breadcrumb-sep">/</span>
+      {%- if collection != null and collection.handle != blank -%}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+        <span class="alphanix-product__breadcrumb-sep">/</span>
+      {%- elsif product.collections.first -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span class="alphanix-product__breadcrumb-sep">/</span>
+      {%- endif -%}
+      <span class="alphanix-product__breadcrumb-current">{{ product.title }}</span>
+    </nav>
+  {%- endif -%}
+
   <div class="page-width">
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
       <div class="grid__item product__media-wrapper">
@@ -736,6 +782,226 @@
       {{ product | structured_data }}
     </script>
   </div>
+
+  {%- comment -%}
+    ============================================================
+    Alphanix add-ons: sticky mobile add-to-bag bar + size-required
+    sheet that intercepts ATC clicks when no size is chosen.
+    Both are progressive enhancements — they only render when the
+    Alphanix toggle is on, and they delegate to the existing Dawn
+    product-form (so all variant logic, cart drawer integration
+    and cart bubble updates keep working).
+    ============================================================
+  {%- endcomment -%}
+  {%- if section.settings.enable_alphanix_style and section.settings.alphanix_show_sticky_bar -%}
+    <div class="alphanix-product__sticky-bar" data-alphanix-sticky-bar hidden>
+      <div class="alphanix-product__sticky-inner">
+        {%- if product.featured_image -%}
+          <div class="alphanix-product__sticky-img">
+            {{ product.featured_image | image_url: width: 100 | image_tag: loading: 'lazy', widths: '50, 100', sizes: '50px', alt: product.title | escape }}
+          </div>
+        {%- endif -%}
+        <div class="alphanix-product__sticky-info">
+          <div class="alphanix-product__sticky-title">{{ product.title | escape }}</div>
+          <div class="alphanix-product__sticky-meta">
+            <span data-alphanix-sticky-size class="alphanix-product__sticky-size" hidden></span>
+            <span class="alphanix-product__sticky-price" id="alphanix-sticky-price-{{ section.id }}">
+              {%- render 'price', product: product, use_variant: true, show_badges: false -%}
+            </span>
+          </div>
+        </div>
+        <button type="button" class="alphanix-product__sticky-btn" data-alphanix-atc>
+          <span data-alphanix-atc-label>{{ section.settings.alphanix_sticky_bar_label | default: 'Add to bag' }}</span>
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.enable_alphanix_style and section.settings.alphanix_size_sheet_enabled -%}
+    <div
+      class="alphanix-product__size-sheet"
+      data-alphanix-size-sheet
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ section.settings.alphanix_size_sheet_heading | default: 'Select a size' }}"
+    >
+      <button class="alphanix-product__size-sheet-overlay" data-alphanix-size-close type="button" aria-label="{{ 'accessibility.close' | t }}"></button>
+      <div class="alphanix-product__size-sheet-card">
+        <div class="alphanix-product__size-sheet-grabber" aria-hidden="true"></div>
+        <div class="alphanix-product__size-sheet-header">
+          <h3 class="alphanix-product__size-sheet-heading">{{ section.settings.alphanix_size_sheet_heading | default: 'Select a size' }}</h3>
+          <button class="alphanix-product__size-sheet-close" data-alphanix-size-close type="button" aria-label="{{ 'accessibility.close' | t }}">
+            {{ 'icon-close.svg' | inline_asset_content }}
+          </button>
+        </div>
+        <p class="alphanix-product__size-sheet-sub">{{ section.settings.alphanix_size_sheet_sub | default: 'Pick your size to continue.' }}</p>
+        <div class="alphanix-product__size-sheet-options" data-alphanix-size-options></div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.enable_alphanix_style -%}
+    <script>
+      (function () {
+        const root = document.getElementById('MainProduct-{{ section.id }}');
+        if (!root) return;
+
+        const SIZE_NAME = {{ section.settings.alphanix_size_option_name | default: 'Size' | json }};
+
+        // ---------- Helpers ----------
+
+        // Find the radio inputs for the size option (Dawn renders them inside
+        // .product-form__input--pill > input[type="radio"]).
+        function getSizeRadios() {
+          const fieldsets = root.querySelectorAll('variant-selects fieldset.product-form__input');
+          for (const fs of fieldsets) {
+            const legend = fs.querySelector('legend');
+            if (!legend) continue;
+            const label = (legend.textContent || '').trim().toLowerCase();
+            if (label.startsWith(SIZE_NAME.toLowerCase())) {
+              return Array.from(fs.querySelectorAll('input[type="radio"]'));
+            }
+          }
+          // Fallback: if there's a single option set, treat it as size.
+          if (fieldsets.length === 1) {
+            return Array.from(fieldsets[0].querySelectorAll('input[type="radio"]'));
+          }
+          return [];
+        }
+
+        function getSelectedSize() {
+          const radios = getSizeRadios();
+          const checked = radios.find((r) => r.checked && !r.classList.contains('disabled'));
+          return checked ? checked.value : null;
+        }
+
+        function isSizeRequired() {
+          return getSizeRadios().length > 1;
+        }
+
+        // ---------- Sticky bar ----------
+
+        const stickyBar = root.querySelector('[data-alphanix-sticky-bar]');
+        const inPageSubmit = root.querySelector('.product-form__submit');
+
+        if (stickyBar && inPageSubmit) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) stickyBar.setAttribute('hidden', '');
+                else stickyBar.removeAttribute('hidden');
+              });
+            },
+            { rootMargin: '0px 0px -64px 0px' }
+          );
+          observer.observe(inPageSubmit);
+
+          // Mirror the size selection into the sticky bar
+          const updateStickySize = () => {
+            const sizeSlot = stickyBar.querySelector('[data-alphanix-sticky-size]');
+            if (!sizeSlot) return;
+            const size = getSelectedSize();
+            if (size && isSizeRequired()) {
+              sizeSlot.textContent = SIZE_NAME + ': ' + size;
+              sizeSlot.removeAttribute('hidden');
+            } else {
+              sizeSlot.setAttribute('hidden', '');
+            }
+          };
+          root.addEventListener('change', (e) => {
+            if (e.target.matches('variant-selects input[type="radio"]')) updateStickySize();
+          });
+          updateStickySize();
+
+          // Sticky CTA: if size missing → open sheet; else → forward click to in-page submit
+          const stickyAtc = stickyBar.querySelector('[data-alphanix-atc]');
+          stickyAtc?.addEventListener('click', () => {
+            if (isSizeRequired() && !getSelectedSize()) {
+              openSizeSheet(() => inPageSubmit.click());
+            } else {
+              inPageSubmit.click();
+            }
+          });
+        }
+
+        // ---------- Size-required sheet ----------
+
+        const sheet = root.querySelector('[data-alphanix-size-sheet]');
+        const optionsHost = sheet?.querySelector('[data-alphanix-size-options]');
+        let onResolveSize = null;
+
+        function buildSizeOptions() {
+          if (!optionsHost) return;
+          optionsHost.innerHTML = '';
+          const radios = getSizeRadios();
+          radios.forEach((radio) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'alphanix-product__size-sheet-option';
+            btn.textContent = radio.value;
+            const disabled = radio.classList.contains('disabled') ||
+              (radio.dataset.optionDisabled === 'true');
+            if (disabled) btn.classList.add('is-disabled');
+            btn.addEventListener('click', () => {
+              if (disabled) return;
+              radio.checked = true;
+              radio.dispatchEvent(new Event('change', { bubbles: true }));
+              closeSizeSheet();
+              const cb = onResolveSize;
+              onResolveSize = null;
+              // Defer slightly so Dawn's variant-change pipeline runs first
+              setTimeout(() => { if (typeof cb === 'function') cb(); }, 60);
+            });
+            optionsHost.appendChild(btn);
+          });
+        }
+
+        function openSizeSheet(onResolve) {
+          if (!sheet) {
+            // Fallback: just trigger the original click — let Dawn's form
+            // validation / native required attributes guide the user.
+            if (typeof onResolve === 'function') onResolve();
+            return;
+          }
+          onResolveSize = onResolve;
+          buildSizeOptions();
+          sheet.removeAttribute('hidden');
+          requestAnimationFrame(() => sheet.classList.add('is-open'));
+          document.body.classList.add('overflow-hidden'); // Dawn's scroll-lock class
+        }
+
+        function closeSizeSheet() {
+          if (!sheet) return;
+          sheet.classList.remove('is-open');
+          document.body.classList.remove('overflow-hidden');
+          setTimeout(() => sheet.setAttribute('hidden', ''), 240);
+        }
+
+        sheet?.querySelectorAll('[data-alphanix-size-close]').forEach((el) => {
+          el.addEventListener('click', closeSizeSheet);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeSizeSheet();
+        });
+
+        // Intercept the in-page Add-to-bag click when no size is chosen.
+        if (inPageSubmit) {
+          // Capture phase so we run before Dawn's product-form submit handler.
+          inPageSubmit.addEventListener(
+            'click',
+            (e) => {
+              if (!isSizeRequired() || getSelectedSize()) return;
+              e.preventDefault();
+              e.stopPropagation();
+              openSizeSheet(() => inPageSubmit.click());
+            },
+            true
+          );
+        }
+      })();
+    </script>
+  {%- endif -%}
 </product-info>
 
 {% schema %}
@@ -2262,6 +2528,73 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Alphanix style"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_alphanix_style",
+      "default": false,
+      "label": "Enable Alphanix style",
+      "info": "Adds the dark editorial layout (red CTA, sticky bar on mobile, breadcrumb, size-required sheet) on top of the standard Dawn product page. Pair with a dark color scheme (e.g. scheme-4)."
+    },
+    {
+      "type": "color",
+      "id": "alphanix_accent_color",
+      "label": "Accent color (CTA + breadcrumb)",
+      "default": "#C8102E"
+    },
+    {
+      "type": "checkbox",
+      "id": "alphanix_show_breadcrumb",
+      "default": true,
+      "label": "Show breadcrumb"
+    },
+    {
+      "type": "text",
+      "id": "alphanix_breadcrumb_home_label",
+      "default": "Home",
+      "label": "Breadcrumb home label"
+    },
+    {
+      "type": "checkbox",
+      "id": "alphanix_show_sticky_bar",
+      "default": true,
+      "label": "Show sticky add-to-bag bar on mobile"
+    },
+    {
+      "type": "text",
+      "id": "alphanix_sticky_bar_label",
+      "default": "Add to bag",
+      "label": "Sticky bar button label"
+    },
+    {
+      "type": "checkbox",
+      "id": "alphanix_size_sheet_enabled",
+      "default": true,
+      "label": "Open size sheet when 'Add to bag' is clicked without a size",
+      "info": "Mobile-friendly bottom sheet that asks the customer to pick a size before adding the item to the cart."
+    },
+    {
+      "type": "text",
+      "id": "alphanix_size_option_name",
+      "default": "Size",
+      "label": "Name of the size option",
+      "info": "Must match the option name on your products (e.g. Size). Used to detect when a size is required."
+    },
+    {
+      "type": "text",
+      "id": "alphanix_size_sheet_heading",
+      "default": "Select a size",
+      "label": "Size sheet heading"
+    },
+    {
+      "type": "text",
+      "id": "alphanix_size_sheet_sub",
+      "default": "Pick your size to continue.",
+      "label": "Size sheet subtext"
     }
   ]
 }

@@ -1,0 +1,146 @@
+{% comment %}
+  Alphanix Featured Products — Uses card-product with dark theme overrides
+{% endcomment %}
+
+{{ 'alphanix-featured.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+{{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+{{ 'component-quick-add-inline.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'quick-add-inline.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+
+{%- assign collection = collections[section.settings.collection] -%}
+{%- assign products_to_show = section.settings.products_to_show | default: 4 -%}
+
+{%- style -%}
+  #alphanix-featured-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+    border-top: 1px solid {{ section.settings.border_color }};
+  }
+  @media screen and (min-width: 750px) {
+    #alphanix-featured-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #alphanix-featured-{{ section.id }} .alphanix-eyebrow__accent { color: {{ section.settings.accent_color }}; }
+  #alphanix-featured-{{ section.id }} .alphanix-featured__view-all { color: {{ section.settings.text_color }}; }
+{%- endstyle -%}
+
+<section class="alphanix-featured" id="alphanix-featured-{{ section.id }}">
+  <div class="alphanix-featured__header">
+    <div class="alphanix-featured__header-inner">
+      <div>
+        <div class="alphanix-eyebrow">
+          <span class="alphanix-eyebrow__accent">—</span> {{ section.settings.eyebrow }}
+        </div>
+        <h2 class="alphanix-featured__heading">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if collection != blank -%}
+        <a href="{{ collection.url }}" class="alphanix-featured__view-all">{{ section.settings.view_all_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="alphanix-featured__strip alphanix-scrollbar-hide">
+    {%- if collection != blank -%}
+      {%- assign skip_card_product_styles = false -%}
+      {%- for product in collection.products limit: products_to_show -%}
+        <div class="alphanix-featured__card-wrap alphanix-fade-in-up" style="transition-delay: {{ forloop.index0 | times: 100 }}ms">
+          {% render 'card-product',
+            card_product: product,
+            media_aspect_ratio: 'portrait',
+            show_secondary_image: section.settings.show_secondary_image,
+            show_vendor: false,
+            show_rating: false,
+            lazy_load: true,
+            skip_styles: skip_card_product_styles,
+            section_id: section.id,
+            quick_add: section.settings.quick_add
+          %}
+        </div>
+        {%- assign skip_card_product_styles = true -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <div class="alphanix-featured__card-wrap">
+          {%- assign placeholder_image = 'product-apparel-' | append: i -%}
+          {% render 'card-product',
+            show_vendor: false,
+            media_aspect_ratio: 'portrait',
+            lazy_load: false,
+            placeholder_image: placeholder_image
+          %}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+(function() {
+  function initFeatured() {
+    const s = document.getElementById('alphanix-featured-{{ section.id }}');
+    if (!s) return;
+    const items = s.querySelectorAll('.alphanix-fade-in-up');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          items.forEach(item => item.classList.add('is-visible'));
+          obs.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.1,rootMargin:'-50px'});
+    obs.observe(s);
+  }
+  initFeatured();
+  document.addEventListener('shopify:section:load', function(e) {
+    if (e.detail.sectionId === '{{ section.id }}') initFeatured();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Alphanix Featured",
+  "tag": "section",
+  "class": "alphanix-featured-section",
+  "settings": [
+    {"type":"header","content":"Content"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow label","default":"Featured"},
+    {"type":"inline_richtext","id":"heading","label":"Heading","default":"Best sellers."},
+    {"type":"collection","id":"collection","label":"Collection"},
+    {"type":"range","id":"products_to_show","min":2,"max":12,"step":1,"label":"Products to show","default":4},
+    {"type":"text","id":"view_all_text","label":"View all button text","default":"View all"},
+    {"type":"header","content":"Product cards"},
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "standard",
+      "label": "Quick add style",
+      "options": [
+        {"value":"none","label":"None"},
+        {"value":"standard","label":"Standard (size buttons on hover)"},
+        {"value":"bulk","label":"Bulk"}
+      ]
+    },
+    {"type":"checkbox","id":"show_secondary_image","label":"Show second image on hover","default":false},
+    {"type":"header","content":"Colors"},
+    {"type":"color","id":"background_color","label":"Background color","default":"#0a0a0a"},
+    {"type":"color","id":"text_color","label":"Text color","default":"#ffffff"},
+    {"type":"color","id":"accent_color","label":"Accent color","default":"#C8102E"},
+    {"type":"color","id":"border_color","label":"Top border color","default":"rgba(255, 255, 255, 0.1)"},
+    {"type":"header","content":"Section padding"},
+    {"type":"range","id":"padding_top","min":0,"max":200,"step":4,"unit":"px","label":"Padding top","default":100},
+    {"type":"range","id":"padding_bottom","min":0,"max":200,"step":4,"unit":"px","label":"Padding bottom","default":100}
+  ],
+  "presets": [{"name":"Alphanix Featured"}]
+}
+{% endschema %}

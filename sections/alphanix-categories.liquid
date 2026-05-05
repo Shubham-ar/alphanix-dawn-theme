@@ -1,0 +1,282 @@
+{% comment %}
+  Alphanix Categories — 3 Collection Cards Grid
+{% endcomment %}
+
+{{ 'alphanix-categories.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #alphanix-categories-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    #alphanix-categories-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-eyebrow__accent {
+    color: {{ section.settings.accent_color }};
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-cat-card__mobile-cta .accent {
+    color: {{ section.settings.accent_color }};
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-cat-card__hover-btn {
+    background-color: {{ section.settings.accent_color }};
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-cat-card {
+    --ax-cat-overlay-strength: {{ section.settings.overlay_strength | divided_by: 100.0 }};
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-categories__view-all {
+    color: {{ section.settings.text_color }};
+  }
+
+  #alphanix-categories-{{ section.id }} .alphanix-categories__mobile-view-all a {
+    color: {{ section.settings.text_color }};
+  }
+{%- endstyle -%}
+
+<section class="alphanix-categories" id="alphanix-categories-{{ section.id }}">
+  <div class="alphanix-container">
+    <!-- Header -->
+    <div class="alphanix-categories__header">
+      <div>
+        <div class="alphanix-eyebrow alphanix-fade-in-up">
+          <span class="alphanix-eyebrow__accent">—</span> {{ section.settings.eyebrow }}
+        </div>
+        <h2 class="alphanix-categories__heading alphanix-fade-in-up">
+          {{ section.settings.heading }}
+        </h2>
+      </div>
+      <a href="{{ section.settings.view_all_url | default: '/collections/all' }}" class="alphanix-categories__view-all">
+        {{ section.settings.view_all_text | default: 'View all' }}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+    </div>
+
+    <!-- Cards — single responsive container (carousel on mobile, grid on desktop) -->
+    <div class="alphanix-categories__grid alphanix-scrollbar-hide">
+      {%- for block in section.blocks -%}
+        {%- render 'alphanix-category-card', block: block, index: forloop.index0 -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Mobile view all -->
+    <div class="alphanix-categories__mobile-view-all">
+      <a href="{{ section.settings.view_all_url | default: '/collections/all' }}">
+        <span>{{ section.settings.view_all_text | default: 'View all products' }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    function initCategories() {
+      const section = document.getElementById('alphanix-categories-{{ section.id }}');
+      if (!section) return;
+      const items = section.querySelectorAll('.alphanix-fade-in-up');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            items.forEach(item => item.classList.add('is-visible'));
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '-50px' });
+      observer.observe(section);
+    }
+    initCategories();
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail.sectionId === '{{ section.id }}') initCategories();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Alphanix Categories",
+  "tag": "section",
+  "class": "alphanix-categories-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "Collections"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop the drop."
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View all button text",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "view_all_url",
+      "label": "View all link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#C8102E"
+    },
+    {
+      "type": "range",
+      "id": "overlay_strength",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image overlay strength",
+      "info": "Darkens the bottom of each card so the title stays legible. 0% removes the overlay entirely.",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 100
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag number",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "season",
+          "label": "Season label",
+          "default": "SS/26",
+          "info": "Leave blank to hide"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Regular"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Everyday essentials. Tailored fit."
+        },
+        {
+          "type": "text",
+          "id": "cta_prefix",
+          "label": "Mobile CTA prefix",
+          "default": "Shop",
+          "info": "Text before the title on mobile (e.g. Shop Regular)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Alphanix Categories",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "tag": "01",
+            "season": "SS/26",
+            "title": "Regular",
+            "description": "Everyday essentials. Tailored fit."
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "tag": "02",
+            "season": "SS/26",
+            "title": "Oversized",
+            "description": "Loose silhouettes. Heavyweight cotton."
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "tag": "03",
+            "season": "SS/26",
+            "title": "Premium",
+            "description": "Limited capsule. Numbered drops."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

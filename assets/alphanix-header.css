@@ -1,0 +1,149 @@
+/* =============================================================
+   Alphanix Header — only the rules that are genuinely different
+   from Dawn. Dawn's color scheme + sticky-header + page-width
+   handle everything else.
+
+   Loaded only when "Enable Alphanix style" is on.
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   1. Background gradient (top-to-bottom opacity)
+      Replaces Dawn's flat .gradient background with a vertical
+      fade so the header blends into the page below.
+      Tunable via the section's "Background opacity — top/bottom"
+      ranges, which write --ax-header-bg-top / -bottom inline.
+   ------------------------------------------------------------- */
+
+.header-wrapper.alphanix-header {
+  --ax-header-bg-top: 0.95;
+  --ax-header-bg-bottom: 0.3;
+
+  position: relative;
+  border-bottom: 0;
+  transition: background-image 0.35s ease, backdrop-filter 0.35s ease,
+    border-color 0.35s ease;
+
+  background-color: transparent !important;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(var(--color-background), var(--ax-header-bg-top)) 0%,
+    rgba(var(--color-background), var(--ax-header-bg-bottom)) 100%
+  ) !important;
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  backdrop-filter: saturate(140%) blur(10px);
+}
+
+/* Transparent state — fully see-through (homepage at scroll Y = 0). */
+.header-wrapper.alphanix-header.alphanix-header--transparent-eligible.alphanix-header--is-transparent {
+  background-image: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+/* Scrolled state — bump the bottom opacity so the header doesn't
+   visually disappear over busy content. */
+.header-wrapper.alphanix-header.alphanix-header--scrolled {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(var(--color-background), var(--ax-header-bg-top)) 0%,
+    rgba(var(--color-background), calc(var(--ax-header-bg-bottom) + 0.4)) 100%
+  ) !important;
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.08);
+}
+
+/* -------------------------------------------------------------
+   2. Decorative red top fade (Figma)
+      Sized via Dawn's own --header-height variable.
+   ------------------------------------------------------------- */
+
+.header-wrapper.alphanix-header .alphanix-header__fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height, 80px);
+  pointer-events: none;
+  z-index: 0;
+  /* Background is set inline by the section so the merchant's accent
+     color and strength settings apply. */
+}
+
+/* Header content sits above the fade */
+.header-wrapper.alphanix-header > .header {
+  position: relative;
+  z-index: 1;
+}
+
+/* Soften the fade when transparent (homepage hero); hide once scrolled. */
+.header-wrapper.alphanix-header.alphanix-header--is-transparent .alphanix-header__fade {
+  opacity: 0.85;
+}
+.header-wrapper.alphanix-header.alphanix-header--scrolled .alphanix-header__fade {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* -------------------------------------------------------------
+   3. Editorial typography for menu links
+      Dawn's defaults are sentence-case + decorated; the design calls
+      for tracked uppercase with an underline that animates in.
+   ------------------------------------------------------------- */
+
+.header-wrapper.alphanix-header .header__menu-item,
+.header-wrapper.alphanix-header .header__active-menu-item {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.header-wrapper.alphanix-header .header__menu-item:hover {
+  text-decoration: none;
+}
+
+.header-wrapper.alphanix-header .header__menu-item span {
+  text-decoration: none;
+  transition: opacity 0.25s ease;
+}
+
+.header-wrapper.alphanix-header .header__menu-item:hover span {
+  opacity: 0.7;
+}
+
+/* Animated underline on hover/active */
+.header-wrapper.alphanix-header .header__menu-item span::after,
+.header-wrapper.alphanix-header .list-menu__item--active span::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s ease;
+  margin-top: 0.4rem;
+}
+
+.header-wrapper.alphanix-header .header__menu-item:hover span::after,
+.header-wrapper.alphanix-header .list-menu__item--active span::after {
+  transform: scaleX(1);
+}
+
+/* -------------------------------------------------------------
+   4. Cart bubble — accent color (the only icon style we override)
+   ------------------------------------------------------------- */
+
+.header-wrapper.alphanix-header .cart-count-bubble {
+  background-color: var(--ax-header-accent);
+  color: #ffffff;
+}
+
+/* -------------------------------------------------------------
+   5. Transparent-on-home: force white text/icons over the hero
+      We swap --color-foreground only on this state so all of Dawn's
+      icon/text rules pick up white automatically.
+   ------------------------------------------------------------- */
+
+.header-wrapper.alphanix-header.alphanix-header--is-transparent {
+  --color-foreground: 255, 255, 255;
+}

@@ -1,0 +1,113 @@
+{% comment %}
+  Alphanix Newsletter — Large heading with email form and decorative rings
+{% endcomment %}
+
+{{ 'alphanix-newsletter.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #alphanix-newsletter-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+    border-top: 1px solid {{ section.settings.border_color }};
+  }
+  @media screen and (min-width: 750px) {
+    #alphanix-newsletter-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #alphanix-newsletter-{{ section.id }} .alphanix-eyebrow__accent { color: {{ section.settings.accent_color }}; }
+  #alphanix-newsletter-{{ section.id }} .alphanix-newsletter__field:focus-within { border-color: {{ section.settings.accent_color }}; }
+  #alphanix-newsletter-{{ section.id }} .alphanix-newsletter__submit:hover { color: {{ section.settings.accent_color }}; }
+  #alphanix-newsletter-{{ section.id }} .alphanix-newsletter__success { color: {{ section.settings.accent_color }}; }
+  #alphanix-newsletter-{{ section.id }} .alphanix-newsletter__ring {
+    border-color: {{ section.settings.ring_color }};
+  }
+  #alphanix-newsletter-{{ section.id }} .alphanix-newsletter__input {
+    color: {{ section.settings.text_color }};
+  }
+{%- endstyle -%}
+
+<section class="alphanix-newsletter" id="alphanix-newsletter-{{ section.id }}">
+  {%- if section.settings.show_rings -%}
+    <div class="alphanix-newsletter__ring alphanix-newsletter__ring--1"></div>
+    <div class="alphanix-newsletter__ring alphanix-newsletter__ring--2"></div>
+    <div class="alphanix-newsletter__ring alphanix-newsletter__ring--3"></div>
+  {%- endif -%}
+
+  <div class="alphanix-newsletter__inner">
+    <div class="alphanix-eyebrow" style="margin-bottom: 1.5rem;">
+      <span class="alphanix-eyebrow__accent">—</span> {{ section.settings.eyebrow }}
+    </div>
+
+    <h2 class="alphanix-newsletter__heading">{{ section.settings.heading }}</h2>
+    <p class="alphanix-newsletter__subtitle">{{ section.settings.subtitle }}</p>
+
+    <div class="alphanix-newsletter__form-wrap" id="AlphanixNewsletterForm-{{ section.id }}">
+      {% form 'customer', class: 'alphanix-newsletter__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        {%- comment -%} Tell Shopify to redirect back to this section's anchor after submit {%- endcomment -%}
+        <input type="hidden" name="return_to" value="{{ request.path }}#AlphanixNewsletterForm-{{ section.id }}">
+        <div class="alphanix-newsletter__field">
+          <input
+            id="AlphanixNewsletter--{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            class="alphanix-newsletter__input"
+            value="{{ form.email }}"
+            aria-required="true"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            {% if form.errors %}autofocus aria-invalid="true" aria-describedby="Newsletter-error--{{ section.id }}"
+            {% elsif form.posted_successfully? %}aria-describedby="Newsletter-success--{{ section.id }}"{% endif %}
+            placeholder="{{ section.settings.placeholder }}"
+            required
+          >
+          <button type="submit" class="alphanix-newsletter__submit" aria-label="{{ section.settings.submit_label }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+        {%- if form.errors -%}
+          <p class="alphanix-newsletter__error" id="Newsletter-error--{{ section.id }}">
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </p>
+        {%- endif -%}
+        {%- if form.posted_successfully? -%}
+          <p class="alphanix-newsletter__success" id="Newsletter-success--{{ section.id }}">
+            {{ 'newsletter.success' | t }}
+          </p>
+        {%- endif -%}
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Alphanix Newsletter",
+  "tag": "section",
+  "class": "alphanix-newsletter-section",
+  "settings": [
+    {"type":"paragraph","content":"Subscribers will be added to your customer list. [Learn more](https://help.shopify.com/manual/customers)"},
+    {"type":"header","content":"Content"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow label","default":"Join the family"},
+    {"type":"inline_richtext","id":"heading","label":"Heading","default":"Be first in line."},
+    {"type":"textarea","id":"subtitle","label":"Subtitle","default":"Get early access to new drops, restocks, and exclusive offers. No spam — just the good stuff."},
+    {"type":"text","id":"placeholder","label":"Email placeholder","default":"ENTER YOUR EMAIL"},
+    {"type":"text","id":"submit_label","label":"Submit button label (accessibility)","default":"Subscribe"},
+    {"type":"header","content":"Decoration"},
+    {"type":"checkbox","id":"show_rings","label":"Show decorative rings","default":true},
+    {"type":"color","id":"ring_color","label":"Ring color","default":"rgba(255, 255, 255, 0.08)"},
+    {"type":"header","content":"Colors"},
+    {"type":"color","id":"background_color","label":"Background color","default":"#0a0a0a"},
+    {"type":"color","id":"text_color","label":"Text color","default":"#ffffff"},
+    {"type":"color","id":"accent_color","label":"Accent color","default":"#C8102E"},
+    {"type":"color","id":"border_color","label":"Top border color","default":"rgba(255, 255, 255, 0.1)"},
+    {"type":"header","content":"Section padding"},
+    {"type":"range","id":"padding_top","min":0,"max":200,"step":4,"unit":"px","label":"Padding top","default":140},
+    {"type":"range","id":"padding_bottom","min":0,"max":200,"step":4,"unit":"px","label":"Padding bottom","default":140}
+  ],
+  "presets": [{"name":"Alphanix Newsletter"}]
+}
+{% endschema %}

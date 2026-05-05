@@ -1,0 +1,391 @@
+/* =============================================================
+   Alphanix Product — only the rules that are genuinely different
+   from Dawn. Dawn's color scheme + variant picker + buy buttons +
+   media gallery + accordion + price snippets handle everything
+   else. We just retypography + redirect Dawn's button vars to our
+   accent color, then add three custom UI elements:
+     • breadcrumb
+     • mobile sticky add-to-bag bar
+     • size-required bottom sheet
+
+   Loaded only when "Enable Alphanix style" is on.
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   1. Section-level overrides — redirect Dawn's button color scheme
+      vars to our accent. Dawn's existing button styling (size,
+      shadow, hover, disabled) then "just works" using our color.
+   ------------------------------------------------------------- */
+
+.alphanix-product {
+  /* --ax-product-accent is set inline by the section liquid. */
+  --color-button: var(--ax-product-accent-rgb, 200, 16, 46);
+  --color-button-text: 255, 255, 255;
+}
+
+/* -------------------------------------------------------------
+   2. Breadcrumb (Dawn doesn't have one on the PDP)
+   ------------------------------------------------------------- */
+
+.alphanix-product__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 auto 2rem;
+  padding-top: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 1.1rem;
+  color: rgba(var(--color-foreground), 0.6);
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-product__breadcrumb {
+    font-size: 1.2rem;
+    padding-top: 2.5rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.alphanix-product__breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.alphanix-product__breadcrumb a:hover {
+  color: rgb(var(--color-foreground));
+}
+
+.alphanix-product__breadcrumb-current {
+  color: rgb(var(--color-foreground));
+}
+
+.alphanix-product__breadcrumb-sep {
+  opacity: 0.5;
+}
+
+/* -------------------------------------------------------------
+   3. Editorial typography (just title + variant pills + price)
+      Dawn already styles these — we only change typography +
+      ensure no rounded corners on pills.
+   ------------------------------------------------------------- */
+
+.alphanix-product .product__title h1,
+.alphanix-product .product__title h2 {
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  font-weight: 600;
+  margin: 0;
+}
+
+.alphanix-product .price__container .price-item {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.alphanix-product .price__container .price-item--sale {
+  color: var(--ax-product-accent);
+  font-weight: 600;
+}
+
+/* Variant pill: keep Dawn's hover/checked/disabled — we only retypography
+   and remove the radius. */
+.alphanix-product .product-form__input--pill input[type='radio'] + label {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  border-radius: 0;
+}
+
+.alphanix-product .product-form__input legend.form__label {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 1.2rem;
+}
+
+.alphanix-product .product-form__submit {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------
+   4. "More payment options" link
+      Shopify ships this as an unstyled blue-ish link by default.
+      The only real Dawn-vs-design conflict here.
+   ------------------------------------------------------------- */
+
+.alphanix-product .shopify-payment-button__more-options,
+.alphanix-product button[data-shopify='payment-button-more-options'] {
+  color: rgba(var(--color-foreground), 0.7) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 1.2rem;
+  background: transparent !important;
+}
+
+.alphanix-product .shopify-payment-button__more-options:hover {
+  color: rgb(var(--color-foreground)) !important;
+}
+
+/* -------------------------------------------------------------
+   5. Sticky add-to-bag bar (mobile only) — purely additive UI
+   ------------------------------------------------------------- */
+
+.alphanix-product__sticky-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: color-mix(in oklab, rgb(var(--color-background)) 95%, transparent);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  backdrop-filter: saturate(140%) blur(16px);
+  border-top: 1px solid rgba(var(--color-foreground), 0.12);
+  padding: 0.8rem 1.4rem calc(0.8rem + env(safe-area-inset-bottom));
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  color: rgb(var(--color-foreground));
+}
+
+.alphanix-product__sticky-bar[hidden] {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  display: block !important; /* preserve animation; HTML hidden attr stays for a11y */
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-product__sticky-bar {
+    display: none !important;
+  }
+}
+
+.alphanix-product__sticky-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.alphanix-product__sticky-img {
+  width: 4.4rem;
+  height: 4.4rem;
+  flex-shrink: 0;
+  background: rgba(var(--color-foreground), 0.05);
+  overflow: hidden;
+}
+
+.alphanix-product__sticky-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.alphanix-product__sticky-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.alphanix-product__sticky-title {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 1.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alphanix-product__sticky-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.alphanix-product__sticky-meta .price-item {
+  font-size: inherit;
+  color: inherit;
+}
+
+.alphanix-product__sticky-size {
+  background: rgba(var(--color-foreground), 0.1);
+  padding: 0.2rem 0.6rem;
+}
+
+.alphanix-product__sticky-btn {
+  flex-shrink: 0;
+  background: var(--ax-product-accent);
+  color: #ffffff;
+  border: 0;
+  padding: 1.2rem 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 4.6rem;
+  transition: transform 0.15s ease;
+}
+
+.alphanix-product__sticky-btn:active {
+  transform: scale(0.97);
+}
+
+/* -------------------------------------------------------------
+   6. Size-required bottom sheet — purely additive UI
+   ------------------------------------------------------------- */
+
+.alphanix-product__size-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.alphanix-product__size-sheet[hidden] {
+  display: none;
+}
+
+.alphanix-product__size-sheet.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.alphanix-product__size-sheet-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.alphanix-product__size-sheet-card {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  background: rgb(var(--color-background));
+  border-top: 1px solid rgba(var(--color-foreground), 0.12);
+  padding: 1rem 2rem 2.4rem;
+  padding-bottom: calc(2.4rem + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  color: rgb(var(--color-foreground));
+}
+
+.alphanix-product__size-sheet.is-open .alphanix-product__size-sheet-card {
+  transform: translateY(0);
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-product__size-sheet {
+    align-items: center;
+  }
+  .alphanix-product__size-sheet-card {
+    border: 1px solid rgba(var(--color-foreground), 0.12);
+    padding: 2.4rem;
+    transform: translateY(8px);
+  }
+  .alphanix-product__size-sheet.is-open .alphanix-product__size-sheet-card {
+    transform: translateY(0);
+  }
+}
+
+.alphanix-product__size-sheet-grabber {
+  width: 4rem;
+  height: 4px;
+  background: rgba(var(--color-foreground), 0.2);
+  border-radius: 4px;
+  margin: 0 auto 1.2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-product__size-sheet-grabber { display: none; }
+}
+
+.alphanix-product__size-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.alphanix-product__size-sheet-heading {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.alphanix-product__size-sheet-close {
+  background: transparent;
+  border: 0;
+  padding: 0.6rem;
+  margin: -0.6rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.alphanix-product__size-sheet-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.alphanix-product__size-sheet-sub {
+  margin: 0 0 1.6rem;
+  color: rgba(var(--color-foreground), 0.65);
+  font-size: 1.3rem;
+}
+
+.alphanix-product__size-sheet-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+@media screen and (max-width: 480px) {
+  .alphanix-product__size-sheet-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.alphanix-product__size-sheet-option {
+  background: transparent;
+  color: rgb(var(--color-foreground));
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  padding: 1.4rem 0.8rem;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  font-weight: 500;
+  transition: border-color 0.2s ease;
+  min-height: 5.2rem;
+}
+
+.alphanix-product__size-sheet-option:hover {
+  border-color: rgb(var(--color-foreground));
+}
+
+.alphanix-product__size-sheet-option.is-disabled {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}

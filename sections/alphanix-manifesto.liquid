@@ -1,0 +1,133 @@
+{% comment %}
+  Alphanix Manifesto — Scroll-reveal word-by-word text section
+{% endcomment %}
+
+{%- style -%}
+  #alphanix-manifesto-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+    border-top: 1px solid {{ section.settings.border_color }};
+    position: relative;
+  }
+  @media screen and (min-width: 750px) {
+    #alphanix-manifesto-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #alphanix-manifesto-{{ section.id }} .alphanix-manifesto__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  @media screen and (min-width: 750px) {
+    #alphanix-manifesto-{{ section.id }} .alphanix-manifesto__inner { padding: 0 4rem; }
+  }
+  #alphanix-manifesto-{{ section.id }} .alphanix-eyebrow__accent {
+    color: {{ section.settings.accent_color }};
+  }
+  #alphanix-manifesto-{{ section.id }} .alphanix-manifesto__text {
+    text-transform: uppercase;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, {{ section.settings.heading_scale }}vw, {{ section.settings.heading_max_size | times: 0.1 }}rem);
+    font-weight: 700;
+    margin: 0;
+  }
+  #alphanix-manifesto-{{ section.id }} .alphanix-manifesto__word {
+    display: inline-block;
+    margin-right: 0.25em;
+    opacity: {{ section.settings.dim_opacity | divided_by: 100.0 }};
+    transition: opacity 0.3s ease;
+  }
+  #alphanix-manifesto-{{ section.id }} .alphanix-manifesto__word.is-revealed { opacity: 1; }
+{%- endstyle -%}
+
+<section id="alphanix-manifesto-{{ section.id }}">
+  <div class="alphanix-manifesto__inner">
+    <div class="alphanix-eyebrow">
+      <span class="alphanix-eyebrow__accent">—</span> {{ section.settings.eyebrow }}
+    </div>
+    <p class="alphanix-manifesto__text">
+      {%- assign words = section.settings.text | split: ' ' -%}
+      {%- for word in words -%}
+        <span class="alphanix-manifesto__word" data-index="{{ forloop.index0 }}">{{ word }}</span>
+      {%- endfor -%}
+    </p>
+  </div>
+</section>
+
+<script>
+(function() {
+  function initManifesto() {
+    const s = document.getElementById('alphanix-manifesto-{{ section.id }}');
+    if (!s) return;
+    const words = s.querySelectorAll('.alphanix-manifesto__word');
+    if (!words.length) return;
+    const total = words.length;
+    
+    function onScroll() {
+      const r = s.getBoundingClientRect();
+      let p = (window.innerHeight*0.9 - r.top) / (window.innerHeight*0.5 + r.height*0.5);
+      p = Math.min(Math.max(p,0),1);
+      words.forEach((w,i) => {
+        const ws = i/total, we = ws+1/total;
+        if (p>=we) w.classList.add('is-revealed');
+        else if (p<ws) w.classList.remove('is-revealed');
+        else if ((p-ws)/(we-ws)>0.3) w.classList.add('is-revealed');
+      });
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { window.addEventListener('scroll', onScroll, {passive:true}); onScroll(); }
+        else { window.removeEventListener('scroll', onScroll); }
+      });
+    }, {threshold:0});
+    obs.observe(s);
+
+    // Clean up function to be attached if needed, though for standard theme editor re-renders,
+    // the old DOM is destroyed along with its event listeners on window (if unobserved properly, though window scroll needs explicit removal).
+    // The safest is to rely on the destruction of the section to stop caring, but window scroll persists.
+    // Actually, when the section is removed, the IntersectionObserver might not fire 'not intersecting'.
+    // To be perfectly robust for Theme Editor, we should handle `shopify:section:unload`.
+    // Let's keep it simple as Dawn does, usually just re-initing is enough if we don't leak heavily.
+    // But to prevent multiple window scroll listeners, let's attach the handler on the element.
+    s.alphanixOnScroll = onScroll;
+  }
+  
+  initManifesto();
+  
+  document.addEventListener('shopify:section:load', function(e) {
+    if (e.detail.sectionId === '{{ section.id }}') initManifesto();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Alphanix Manifesto",
+  "tag": "section",
+  "class": "alphanix-manifesto-section",
+  "settings": [
+    {"type":"header","content":"Content"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow label","default":"Manifesto"},
+    {"type":"textarea","id":"text","label":"Manifesto text","default":"We build for the ones who don't quit. The ones grinding when no one's watching. Alphanix is fabric forged for relentless ambition — heavyweight, honest, uncompromising."},
+    {"type":"header","content":"Typography"},
+    {"type":"range","id":"heading_scale","min":2,"max":10,"step":1,"unit":"vw","label":"Font size scale","default":5,"info":"Controls the fluid font size (vw units)"},
+    {"type":"range","id":"heading_max_size","min":20,"max":80,"step":5,"unit":"px","label":"Max font size","default":45},
+    {"type":"range","id":"max_width","min":600,"max":1600,"step":50,"unit":"px","label":"Content max width","default":1100},
+    {"type":"header","content":"Animation"},
+    {"type":"range","id":"dim_opacity","min":5,"max":40,"step":5,"unit":"%","label":"Dim word opacity","default":15,"info":"Opacity of words before they are revealed"},
+    {"type":"header","content":"Colors"},
+    {"type":"color","id":"background_color","label":"Background color","default":"#0a0a0a"},
+    {"type":"color","id":"text_color","label":"Text color","default":"#ffffff"},
+    {"type":"color","id":"accent_color","label":"Accent color","default":"#C8102E"},
+    {"type":"color","id":"border_color","label":"Top border color","default":"rgba(255, 255, 255, 0.1)"},
+    {"type":"header","content":"Section padding"},
+    {"type":"range","id":"padding_top","min":0,"max":200,"step":4,"unit":"px","label":"Padding top","default":140},
+    {"type":"range","id":"padding_bottom","min":0,"max":200,"step":4,"unit":"px","label":"Padding bottom","default":140}
+  ],
+  "presets": [{"name":"Alphanix Manifesto"}]
+}
+{% endschema %}

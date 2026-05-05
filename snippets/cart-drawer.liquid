@@ -10,12 +10,34 @@
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'free-shipping-bar.js' | asset_url }}" defer="defer"></script>
 
 <style>
   .drawer {
     visibility: hidden;
   }
 </style>
+
+<script>
+  // Backstop "click-outside-to-close" handler. Dawn wires this on
+  // #CartDrawer-Overlay, but stacking-context quirks (custom headers,
+  // sticky elements, etc.) can intercept that overlay click — which
+  // also moves focus out of <cart-drawer> and breaks the Esc handler.
+  // Listening on the document and querying for an open drawer fires
+  // regardless of which element actually receives the click, so we
+  // close as long as the click landed outside the panel itself.
+  document.addEventListener(
+    'click',
+    function (event) {
+      var openDrawer = document.querySelector('cart-drawer.drawer.active');
+      if (!openDrawer) return;
+      if (event.target.closest('.drawer__inner')) return;
+      if (event.target.closest('#cart-icon-bubble')) return; // don't close on the trigger
+      openDrawer.close();
+    },
+    true
+  );
+</script>
 
 <cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
   <div id="CartDrawer" class="cart-drawer">

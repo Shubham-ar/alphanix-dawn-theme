@@ -14,7 +14,7 @@
       "settings": {
         "show_collection_description": true,
         "show_collection_image": false,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-4"
       }
     },
     "category-tabs": {
@@ -40,9 +40,9 @@
         "mobile_pill_padding_vertical": 6,
         "mobile_pill_padding_horizontal": 14,
         "mobile_pill_gap": 8,
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 0
+        "color_scheme": "scheme-4",
+        "padding_top": 20,
+        "padding_bottom": 20
       }
     },
     "product-grid": {
@@ -51,7 +51,7 @@
         "products_per_page": 16,
         "columns_desktop": 4,
         "columns_mobile": "2",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-4",
         "image_ratio": "portrait",
         "image_shape": "default",
         "show_secondary_image": true,

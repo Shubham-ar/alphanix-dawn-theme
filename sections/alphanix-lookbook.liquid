@@ -1,0 +1,129 @@
+{% comment %}
+  Alphanix Lookbook — Staggered parallax image grid
+{% endcomment %}
+
+{{ 'alphanix-lookbook.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #alphanix-lookbook-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+    border-top: 1px solid {{ section.settings.border_color }};
+  }
+  @media screen and (min-width: 750px) {
+    #alphanix-lookbook-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="alphanix-lookbook" id="alphanix-lookbook-{{ section.id }}">
+  <div class="alphanix-lookbook__bg-text" id="alphanix-lookbook-bg-{{ section.id }}">
+    {{ section.settings.background_text }}
+  </div>
+
+  <div class="alphanix-container">
+    <div class="alphanix-lookbook__header">
+      <div>
+        <div class="alphanix-eyebrow">— {{ section.settings.eyebrow }}</div>
+        <h2 class="alphanix-lookbook__heading">{{ section.settings.heading }}</h2>
+      </div>
+    </div>
+
+    <div class="alphanix-lookbook__grid">
+      <div class="alphanix-lookbook__large" id="alphanix-lookbook-img1-{{ section.id }}">
+        {%- if section.settings.image_1 != blank -%}
+          <img src="{{ section.settings.image_1 | image_url: width: 1800 }}" alt="{{ section.settings.image_1.alt | escape | default: 'Lookbook' }}" class="alphanix-lookbook__image" loading="lazy" width="900" height="1125">
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'alphanix-lookbook__image placeholder' }}
+        {%- endif -%}
+      </div>
+
+      <div class="alphanix-lookbook__stack">
+        <div class="alphanix-lookbook__wide" id="alphanix-lookbook-img2-{{ section.id }}">
+          {%- if section.settings.image_2 != blank -%}
+            <img src="{{ section.settings.image_2 | image_url: width: 1400 }}" alt="{{ section.settings.image_2.alt | escape | default: 'Lookbook' }}" class="alphanix-lookbook__image" loading="lazy" width="700" height="525">
+          {%- else -%}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'alphanix-lookbook__image placeholder' }}
+          {%- endif -%}
+        </div>
+        <div class="alphanix-lookbook__square" id="alphanix-lookbook-img3-{{ section.id }}">
+          {%- if section.settings.image_3 != blank -%}
+            <img src="{{ section.settings.image_3 | image_url: width: 1400 }}" alt="{{ section.settings.image_3.alt | escape | default: 'Lookbook' }}" class="alphanix-lookbook__image" loading="lazy" width="700" height="700">
+          {%- else -%}
+            {{ 'collection-1' | placeholder_svg_tag: 'alphanix-lookbook__image placeholder' }}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  function initLookbook() {
+    const s = document.getElementById('alphanix-lookbook-{{ section.id }}');
+    if (!s) return;
+    const bg = document.getElementById('alphanix-lookbook-bg-{{ section.id }}');
+    const i1 = document.getElementById('alphanix-lookbook-img1-{{ section.id }}');
+    const i2 = document.getElementById('alphanix-lookbook-img2-{{ section.id }}');
+    const i3 = document.getElementById('alphanix-lookbook-img3-{{ section.id }}');
+    let ticking = false, isVis = false;
+    function onScroll() { if (!ticking) { requestAnimationFrame(update); ticking = true; } }
+    function update() {
+      ticking = false; if (!isVis) return;
+      const r = s.getBoundingClientRect(), vH = window.innerHeight;
+      const p = Math.min(Math.max((vH-r.top)/(vH+r.height),0),1);
+      if (bg) bg.style.transform = 'translateX('+(-30+p*40)+'%)';
+      [i1,i2,i3].forEach((el,idx) => {
+        if (!el) return;
+        const offsets = [[10,-20],[-15,30],[5,-10]];
+        const y = offsets[idx][0]+p*offsets[idx][1];
+        const img = el.querySelector('.alphanix-lookbook__image');
+        if (img) img.style.transform = 'translateY('+y+'%)';
+      });
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        isVis = e.isIntersecting;
+        if (isVis) { window.addEventListener('scroll',onScroll,{passive:true}); update(); }
+        else window.removeEventListener('scroll',onScroll);
+      });
+    }, {threshold:0,rootMargin:'100px'});
+    obs.observe(s);
+  }
+  
+  initLookbook();
+  
+  document.addEventListener('shopify:section:load', function(e) {
+    if (e.detail.sectionId === '{{ section.id }}') initLookbook();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Alphanix Lookbook",
+  "tag": "section",
+  "class": "alphanix-lookbook-section",
+  "settings": [
+    {"type":"header","content":"Content"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow label","default":"Lookbook"},
+    {"type":"inline_richtext","id":"heading","label":"Heading","default":"On the edge."},
+    {"type":"text","id":"background_text","label":"Background scrolling text","default":"ALPHANIX — ALPHANIX"},
+    {"type":"header","content":"Images"},
+    {"type":"image_picker","id":"image_1","label":"Large image (left)"},
+    {"type":"image_picker","id":"image_2","label":"Top right image"},
+    {"type":"image_picker","id":"image_3","label":"Bottom right image"},
+    {"type":"header","content":"Colors"},
+    {"type":"color","id":"background_color","label":"Background color","default":"#0a0a0a"},
+    {"type":"color","id":"text_color","label":"Text color","default":"#ffffff"},
+    {"type":"color","id":"border_color","label":"Top border color","default":"rgba(255, 255, 255, 0.1)"},
+    {"type":"header","content":"Section padding"},
+    {"type":"range","id":"padding_top","min":0,"max":200,"step":4,"unit":"px","label":"Padding top","default":100},
+    {"type":"range","id":"padding_bottom","min":0,"max":200,"step":4,"unit":"px","label":"Padding bottom","default":100}
+  ],
+  "presets": [{"name":"Alphanix Lookbook"}]
+}
+{% endschema %}

@@ -8,6 +8,14 @@
   onload="this.media='all'"
 >
 
+{%- comment -%}
+  Alphanix style overrides — only loads when the merchant enables Alphanix
+  styling in the Theme Editor → Header → Alphanix style.
+{%- endcomment -%}
+{%- if section.settings.enable_alphanix_style -%}
+  {{ 'alphanix-header.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
 {%- if settings.predictive_search_enabled -%}
   <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
 {%- endif -%}
@@ -118,11 +126,47 @@
   endif
 %}
 
+{%- liquid
+  assign alphanix_on_home = false
+  if section.settings.enable_alphanix_style and section.settings.alphanix_transparent_on_home and request.page_type == 'index'
+    assign alphanix_on_home = true
+  endif
+-%}
+
+{%- if section.settings.enable_alphanix_style -%}
+  {%- liquid
+    assign ax_accent_r = section.settings.alphanix_accent_color.red
+    assign ax_accent_g = section.settings.alphanix_accent_color.green
+    assign ax_accent_b = section.settings.alphanix_accent_color.blue
+    assign ax_accent_rgb = ax_accent_r | append: ', ' | append: ax_accent_g | append: ', ' | append: ax_accent_b
+    assign ax_fade_strength = section.settings.alphanix_top_fade_strength | divided_by: 100.0
+    assign ax_bg_top_opacity = section.settings.alphanix_bg_top_opacity | divided_by: 100.0
+    assign ax_bg_bottom_opacity = section.settings.alphanix_bg_bottom_opacity | divided_by: 100.0
+  -%}
+  {%- style -%}
+    .section-header .header-wrapper.alphanix-header {
+      --ax-header-accent: {{ section.settings.alphanix_accent_color }};
+      --ax-header-accent-rgb: {{ ax_accent_rgb }};
+      --ax-header-fade-strength: {{ ax_fade_strength }};
+      --ax-header-bg-top: {{ ax_bg_top_opacity }};
+      --ax-header-bg-bottom: {{ ax_bg_bottom_opacity }};
+    }
+    .section-header .header-wrapper.alphanix-header .alphanix-header__fade {
+      background: linear-gradient(
+        to bottom,
+        rgba({{ ax_accent_rgb }}, {{ ax_fade_strength }}) 0%,
+        rgba({{ ax_accent_rgb }}, 0) 70%,
+        transparent 100%
+      );
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
 <{{ header_tag }}
   {% if header_tag == 'sticky-header' %}
     data-sticky-type="{{ section.settings.sticky_header_type }}"
   {% endif %}
-  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
+  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.enable_alphanix_style %} alphanix-header alphanix-header--accent{% endif %}{% if alphanix_on_home %} alphanix-header--transparent-eligible{% endif %}{% if section.settings.enable_alphanix_style and section.settings.alphanix_show_top_fade %} alphanix-header--has-fade{% endif %}"
 >
   {%- liquid
     assign social_links = false
@@ -303,6 +347,11 @@
       </a>
     </div>
   </header>
+
+  {%- if section.settings.enable_alphanix_style and section.settings.alphanix_show_top_fade -%}
+    {%- comment -%} Decorative red glow on top edge of the header (Figma) {%- endcomment -%}
+    <div class="alphanix-header__fade" aria-hidden="true"></div>
+  {%- endif -%}
 </{{ header_tag }}>
 
 {%- if settings.cart_type == 'notification' -%}
@@ -310,6 +359,28 @@
     color_scheme: section.settings.color_scheme,
     desktop_menu_type: section.settings.menu_type_desktop
   -%}
+{%- endif -%}
+
+{%- if section.settings.enable_alphanix_style -%}
+  <script>
+    (function () {
+      const header = document.querySelector('.header-wrapper.alphanix-header');
+      if (!header) return;
+      const transparentEligible = header.classList.contains('alphanix-header--transparent-eligible');
+
+      // Toggle scroll-state classes only. Dawn's <sticky-header> handles
+      // header height (via --header-height) and reveal/hide on its own.
+      const onScroll = () => {
+        const scrolled = window.scrollY > 40;
+        header.classList.toggle('alphanix-header--scrolled', scrolled);
+        if (transparentEligible) {
+          header.classList.toggle('alphanix-header--is-transparent', !scrolled);
+        }
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
 {%- endif -%}
 
 {% javascript %}
@@ -647,6 +718,68 @@
       "unit": "px",
       "label": "t:sections.all.padding.padding_bottom",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Alphanix style"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_alphanix_style",
+      "default": false,
+      "label": "Enable Alphanix style",
+      "info": "Adds an editorial dark/transparent header look on top of the standard Dawn header. Pair with a dark color scheme (e.g. scheme-4)."
+    },
+    {
+      "type": "checkbox",
+      "id": "alphanix_transparent_on_home",
+      "default": true,
+      "label": "Transparent header on homepage",
+      "info": "Header overlays the hero section on the homepage and becomes solid as the user scrolls."
+    },
+    {
+      "type": "checkbox",
+      "id": "alphanix_show_top_fade",
+      "default": true,
+      "label": "Show red gradient overlay on top edge"
+    },
+    {
+      "type": "range",
+      "id": "alphanix_top_fade_strength",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Red gradient strength",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "alphanix_bg_top_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Background opacity — top",
+      "info": "Header background opacity at the top edge. Higher = more solid.",
+      "default": 95
+    },
+    {
+      "type": "range",
+      "id": "alphanix_bg_bottom_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Background opacity — bottom",
+      "info": "Header background opacity at the bottom edge. Lower = blends into the page below.",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "alphanix_accent_color",
+      "label": "Accent color (cart bubble + active states)",
+      "default": "#C8102E"
     }
   ],
   "blocks": [

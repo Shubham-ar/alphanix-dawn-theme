@@ -1,0 +1,200 @@
+{% comment %}
+  Alphanix Marquee — Infinite scrolling brand ticker
+{% endcomment %}
+
+{%- style -%}
+  #alphanix-marquee-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    border-top: 1px solid {{ section.settings.border_color }};
+    border-bottom: 1px solid {{ section.settings.border_color }};
+    overflow: hidden;
+    padding: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    color: {{ section.settings.text_color }};
+  }
+
+  @media screen and (min-width: 750px) {
+    #alphanix-marquee-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  #alphanix-marquee-{{ section.id }} .alphanix-marquee__track {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: alphanixMarqueeScroll {{ section.settings.speed }}s linear infinite;
+    will-change: transform;
+  }
+
+  #alphanix-marquee-{{ section.id }} .alphanix-marquee__item {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: {{ section.settings.font_size | times: 0.1 }}rem;
+    flex-shrink: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    #alphanix-marquee-{{ section.id }} .alphanix-marquee__item {
+      font-size: {{ section.settings.font_size_desktop | times: 0.1 }}rem;
+    }
+  }
+
+  #alphanix-marquee-{{ section.id }} .alphanix-marquee__separator {
+    color: {{ section.settings.accent_color }};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #alphanix-marquee-{{ section.id }} .alphanix-marquee__track {
+      animation: none;
+    }
+  }
+{%- endstyle -%}
+
+<section id="alphanix-marquee-{{ section.id }}" aria-label="Brand announcements">
+  <div class="alphanix-marquee__track">
+    {%- for i in (1..4) -%}
+      {%- for block in section.blocks -%}
+        <div class="alphanix-marquee__item" {{ block.shopify_attributes }}>
+          <span>{{ block.settings.text }}</span>
+          <span class="alphanix-marquee__separator">{{ section.settings.separator }}</span>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Alphanix Marquee",
+  "tag": "section",
+  "class": "alphanix-marquee-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Scroll speed",
+      "default": 30,
+      "info": "Lower = faster"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator character",
+      "default": "✦"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile font size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Desktop font size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Separator color",
+      "default": "#C8102E"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Marquee Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "FREE SHIPPING OVER $100"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Alphanix Marquee",
+      "blocks": [
+        { "type": "item", "settings": { "text": "FREE SHIPPING OVER $100" } },
+        { "type": "item", "settings": { "text": "MADE IN CANADA" } },
+        { "type": "item", "settings": { "text": "BUILT FOR THE RELENTLESS" } },
+        { "type": "item", "settings": { "text": "PREMIUM HEAVYWEIGHT FABRIC" } },
+        { "type": "item", "settings": { "text": "SS / 26 DROP" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

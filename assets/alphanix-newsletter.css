@@ -1,0 +1,207 @@
+/* Alphanix Newsletter Section */
+
+.alphanix-newsletter {
+  background-color: #0a0a0a;
+  color: #ffffff;
+  padding: 5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-newsletter {
+    padding: 14rem 0;
+  }
+}
+
+.alphanix-newsletter__inner {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-newsletter__inner {
+    padding: 0 4rem;
+  }
+}
+
+.alphanix-newsletter__heading {
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  font-size: clamp(3rem, 10vw, 8rem);
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+}
+
+.alphanix-newsletter__subtitle {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  font-size: 1.3rem;
+  max-width: 550px;
+  margin: 0 auto 3rem;
+  line-height: 1.5;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-newsletter__subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 5rem;
+  }
+}
+
+/* Form */
+.alphanix-newsletter__form-wrap {
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.alphanix-newsletter__field {
+  display: flex;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  transition: border-color 0.3s ease;
+}
+
+.alphanix-newsletter__field:focus-within {
+  border-color: #C8102E;
+}
+
+.alphanix-newsletter__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 1rem 0;
+  outline: none;
+}
+
+.alphanix-newsletter__input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-newsletter__input {
+    font-size: 1.8rem;
+    padding: 1.5rem 0;
+  }
+}
+
+.alphanix-newsletter__submit {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.alphanix-newsletter__submit:hover {
+  color: #C8102E;
+  transform: translateX(4px);
+}
+
+.alphanix-newsletter__submit svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .alphanix-newsletter__submit svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+}
+
+.alphanix-newsletter__success {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1.4rem;
+  margin-top: 1rem;
+  color: #C8102E;
+}
+
+.alphanix-newsletter__error {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  color: #ff4444;
+}
+
+/* Decorative rings */
+.alphanix-newsletter__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.alphanix-newsletter__ring--1 {
+  width: 650px;
+  height: 650px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: alphanixRotate 40s linear infinite;
+}
+
+.alphanix-newsletter__ring--2 {
+  width: 450px;
+  height: 450px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: alphanixRotateReverse 30s linear infinite;
+}
+
+.alphanix-newsletter__ring--3 {
+  width: 250px;
+  height: 250px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: alphanixRotate 20s linear infinite;
+}
+
+/* Ring tick marks */
+.alphanix-newsletter__ring--1::before,
+.alphanix-newsletter__ring--2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(200, 16, 46, 0.5);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.alphanix-newsletter__ring--1::after,
+.alphanix-newsletter__ring--2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(200, 16, 46, 0.3);
+  transform: translateX(-50%) translateY(50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alphanix-newsletter__ring {
+    animation: none;
+  }
+}

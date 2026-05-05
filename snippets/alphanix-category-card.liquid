@@ -1,0 +1,48 @@
+{% comment %}
+  Alphanix Category Card snippet
+  Usage: {% render 'alphanix-category-card', block: block, index: 0 %}
+{% endcomment %}
+
+{%- assign card_link = block.settings.link | default: '/collections/all' -%}
+
+<a href="{{ card_link }}" class="alphanix-cat-card alphanix-fade-in-up" style="transition-delay: {{ index | times: 100 }}ms" {{ block.shopify_attributes }}>
+  <div class="alphanix-cat-card__image-wrap">
+    {%- if block.settings.image != blank -%}
+      <img
+        src="{{ block.settings.image | image_url: width: 1600 }}"
+        alt="{{ block.settings.title | escape }}"
+        class="alphanix-cat-card__image"
+        loading="lazy"
+        width="800"
+        height="1067"
+      >
+    {%- else -%}
+      {%- assign placeholder_index = index | plus: 1 | modulo: 6 | at_least: 1 -%}
+      {{ 'collection-' | append: placeholder_index | placeholder_svg_tag: 'alphanix-cat-card__image placeholder' }}
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Dark scrim is rendered as a ::after pseudo-element on the card; no extra DOM needed. {%- endcomment -%}
+
+  <div class="alphanix-cat-card__meta">
+    <span>{{ block.settings.tag }}</span>
+    {%- if block.settings.season != blank -%}
+      <span>{{ block.settings.season }}</span>
+    {%- endif -%}
+  </div>
+
+  <div class="alphanix-cat-card__content">
+    <h3 class="alphanix-cat-card__title">{{ block.settings.title }}</h3>
+    <p class="alphanix-cat-card__desc">{{ block.settings.description }}</p>
+
+    <div class="alphanix-cat-card__mobile-cta">
+      <span class="accent">{{ block.settings.cta_prefix | default: 'Shop' }}</span>
+      <span>{{ block.settings.title }}</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+    </div>
+  </div>
+
+  <div class="alphanix-cat-card__hover-btn" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+  </div>
+</a>
